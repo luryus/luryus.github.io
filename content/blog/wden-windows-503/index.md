@@ -89,7 +89,7 @@ Well, of course it was not that easy of an conclusion. Curl, being awesome, also
 
 ## The Scrutiny
 
-Time to open Wireshark. I had no idea what to really look for, but I still hoped that comparing the TLS handshakes would reveal something. I'm by no means an expert with TLS, so I considered this a good learning opportunity, too. At least now I had easy methods of making both working and exception-triggering requests: just make identical requests with curl (configured to use Schannel) and Invoke-WebRequest.
+Time to open Wireshark. I had no idea what to really look for, but I still hoped that comparing the TLS handshakes would reveal something. I'm by no means an expert with TLS, so I considered this a good learning opportunity, too. At least now I had easy methods of making both working and exception-triggering requests: just make identical requests with curl (configured to use Schannel) and Invoke-Webrequest.
 
 When comparing the Wireshark captures, I immediately noticed that the TLS handshakes were pretty drastically different. The Invoke-WebRequest TLS handshake had fewer messages. This turned out to be just TLS session resumption, which I had completely forgot about being a thing. Curl does not reuse TLS sessions across runs, whereas Invoke-WebRequest does. Well, this had nothing to do with my Bitwarden issue, after all - the results were still the same after disabling TLS session caching in Windows. But at least now I had more comparable packet captures.
 
@@ -98,7 +98,7 @@ I started to go through the handshake parameters, one by one, and tried to chang
 {% figure(
     src="wireshark.png",
     alt="Screenshot of two Wireshark windows showing TLS Client Hello message details.") %}
-A broken (status code 503) request flow on the left, a working (400) request flow on the left. One is missing the `status_request` extension.
+A broken (status code 503) request flow on the left, a working (400) request flow on the right. One is missing the `status_request` extension.
 {% end %}
 
 Curl has an option to control OCSP stapling, `--no-cert-status`, but that did not seem to do anything. And in fact, the man page even says that the option not implemented for Schannel. It took a bit of searching, but I finally found the Schannel-specific option `--ssl-no-revoke` from curl's man page. I added that to the curl command, and finally:
