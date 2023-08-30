@@ -1,0 +1,185 @@
+@import "./fonts.scss";
+
+body {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Roboto", sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+.content {
+  max-width: 100%;
+}
+
+h1,
+h3,
+h4,
+h5,
+h6 {
+  text-align: initial;
+  font-weight: 600;
+  color: var(--heading-color);
+}
+
+h2 {
+  margin-top: 3em;
+  text-align: initial;
+  font-weight: 700;
+  color: var(--heading-color);
+  letter-spacing: 0.05em;
+  font-size: 1em;
+  text-transform: uppercase;
+}
+
+body {
+  text-align: justify;
+
+  b,
+  strong {
+    font-weight: 600;
+  }
+
+  blockquote {
+    border-left: 6px solid var(--accent-color-light);
+    padding-left: 1rem;
+    font-style: italic;
+    opacity: 0.9;
+  }
+
+  pre {
+    overflow: auto;
+    padding: 1rem;
+    max-width: 100%;
+  }
+}
+
+code {
+  background: hsla(0, 0%, 0%, 0.04);
+  padding: 0.2em 0;
+
+  pre > & {
+    background: none;
+    font-size: 14px;
+  }
+}
+
+a,
+a:visited {
+  color: var(--accent-color);
+  text-decoration: var(--accent-color-light) underline;
+  text-underline-offset: 5%;
+}
+
+main {
+  max-width: 700px;
+  padding-top: 3rem;
+  margin: auto;
+}
+
+$footnote-space: 2rem;
+
+.footnote-definition {
+  font-size: 1rem;
+  margin: 1rem 0px;
+  padding-left: 40px;
+  position: relative;
+
+  &:nth-of-type(1) {
+    margin-top: $footnote-space;
+    padding-top: $footnote-space;
+    border-top: 2px solid rgba(0, 0, 0, 0.1);
+
+    & > sup {
+      top: $footnote-space;
+    }
+  }
+
+  & > sup {
+    position: absolute;
+    top: 0;
+    right: calc(100% - 35px);
+    font-size: inherit;
+    line-height: inherit;
+    margin-right: 0px;
+    display: inline-block;
+
+    &:after {
+      content: ".";
+    }
+  }
+
+  & > p {
+    display: inline-block;
+    margin: 0;
+  }
+}
+
+header {
+  width: 100%;
+  max-width: 700px;
+  margin: auto;
+  display: flex;
+  flex-direction: row;
+}
+
+a.site-name {
+  text-decoration: none;
+  color: var(--heading-color);
+  font-weight: 600;
+  font-size: 20px;
+}
+
+a.profile-icon {
+  border: none;
+  height: 50px;
+  width: 50px;
+  position: relative;
+
+  img {
+    border-radius: 50%;
+  }
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: auto;
+
+  > a:not(:last-child) {
+    margin-right: 1.2rem;
+  }
+}
+
+hr {
+  border: solid 1px rgba(0, 0, 0, 0.1);
+  margin: 2rem 0;
+}
+
+
+figcaption {
+  font-weight: 500;
+  font-size: 13px;
+}
+
+
+@media (max-width: 600px) {
+  body {
+    padding: 1rem;
+    text-align: initial;
+  }
+
+  main {
+    padding-top: 1rem;
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  figcaption {
+    text-align: center;
+  }
+}

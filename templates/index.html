@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% import "post-preview.html" as post_macros %}
+
+{% block posthead %} 
+  {% for post in section.pages %}
+    <link rel="prerender" href="{{ post.permalink }}" />
+  {% endfor %}
+{% endblock posthead %}
+
+{% block content %}
+  {% set blog_section = get_section(path="blog/_index.md") %}
+  {{ blog_section.content | safe }}
+
+  {% for post in blog_section.pages %}
+    {{ post_macros::post_preview(post=post) }}
+  {% endfor %}
+{% endblock content %}

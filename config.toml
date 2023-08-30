@@ -1,0 +1,34 @@
+# The URL the site will be built for
+base_url = "https://luryus.github.io"
+
+title = "Lauri Koskela's Blog"
+
+# Whether to automatically compile all Sass files in the sass directory
+compile_sass = true
+
+# Whether to build a search index to be used later on by a JavaScript library
+build_search_index = false
+
+theme = "simple-dev-blog"
+
+taxonomies = [ { name = "tags" } ]
+
+generate_feed = true
+
+
+[markdown]
+highlight_code = true
+highlight_theme = "css"
+highlight_themes_css = [
+  { theme = "1337", filename = "syntax-theme-dark.css" },
+  { theme = "material-light", filename = "syntax-theme-light.css" },
+]
+
+[extra]
+# Put all your custom variables here
+dark_mode = true
+nav = [ { name = "About", path = "/about/" } ]
+accent = "#1683ac"
+accent_light = "#6c8f9d"
+dark_mode_accent = "#52b3d8"
+footer_about = "Lauri Koskela's Blog // [github.com/luryus](https://github.com/luryus)"
