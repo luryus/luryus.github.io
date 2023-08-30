@@ -1,6 +1,6 @@
 +++
 draft = false
-date = 2023-08-27
+date = 2023-08-30
 title = "Debugging Windows-only 503 Errors From Bitwarden"
 
 [taxonomies]
@@ -113,7 +113,7 @@ The curl+Schannel combination now received a 503 error, too. Could the errors ha
 
 Still not satisfied, I continued to test different options and clients. Up until now, I had used the curl build installed with Git for Windows. [Windows ships with a curl build now](https://curl.se/windows/microsoft.html)[^curl.exe], so I tried that. I ran the same exact command that got a 503 response before. This time the server was back to working normally, and returned a 400 response. Comparing the Wireshark captures from these runs, the only meaningful difference was that the Windows curl build used [ALPN](https://en.wikipedia.org/wiki/Application-Layer_Protocol_Negotiation) to specify HTTP/2 usage during the TLS handshake. I added `--no-alpn` to the curl command, and got a 503 back. What, now ALPN affects the errors, too?
 
-It seemed that the server threw an exception if the client used Schannel with some specific configuration. Changing seemingly arbitrary options changed how the server works. *What was going on here?*
+It seemed that the server threw an exception if the client used Schannel with some specific configuration. Changing seemingly arbitrary options changed how the server worked. *What was going on here?*
 
 
 ## The Gatekeeper
@@ -153,7 +153,7 @@ Basically this means that Bitwarden clients have to support two different ways o
 
 When investigating the server errors, I happened to notice that the errors *only occurred* when making the requests through `vault.bitwarden.com`. Making the same `/token` request directly to `identity.bitwarden.com` always worked. This might be just temporary - for all I know, a bot detector on the `identity` host could start banning my requests tomorrow. However, considering that `vault.bitwarden.com` is only really supposed be used by web browsers, I would not be surprised if it had stricter bot detection rules compared to the other hosts.
 
-So, to work around the issue (at least for now), I finally decided to implement proper support for Bitwarden servers with separate identity and API server URLs. Bitwarden cloud service connections are no longer made through `vault.bitwarden.com`. Server errors no longer happen when using Wden, and this is a little bit less hacky way to use Bitwarden's cloud servers, anyway.
+So, to work around the issue (at least for now), I finally decided to implement proper support for Bitwarden servers with separate identity and API server URLs. Bitwarden cloud service connections are no longer made through `vault.bitwarden.com`, but rather with the separate URLs. Server errors no longer happen when using Wden, and this is a little bit less hacky way to use Bitwarden's cloud servers, anyway.
 
 The error and its root cause did not actually get fixed - I still don't know what causes the errors in Bitwarden's backend code. I did not bother to report this to Bitwarden, because I suspect this does not happen with any of their client applications. At least I didn't find any references to similar errors from the cloud servers.
 
@@ -177,6 +177,6 @@ For now, I can once again access my passwords in the terminal. And, when Wden in
 
 [^curl.exe]: Yes, in PowerShell, `curl` is an alias for Invoke-Webrequest, `curl.exe` is real curl. Not confusing at all.
 
-[^bitwarden-cf-headers]: I'm 99% sure that I saw these headers in some _responses_ from Bitwarden during my investigation and exploration. Given that these headers are only for internal use, I thought it was really weird at the time. When writing this, I could no longer find them in any responses, so maybe Bitwarden has fixed something about the headers recently.
+[^bitwarden-cf-headers]: I'm 99% sure that I saw these headers in some _responses_ from Bitwarden during my investigation and exploration. At the time, I thought it was strange, given that these headers are only for internal use. When writing this, I could no longer find them in any responses, so maybe Bitwarden has fixed something about the headers recently.
 
-[^worker]: Bitwarden's source code has some references to Cloudflare workers being used, and during my testing I saw Cloudflare error messages from a worker throwing an error.
+[^worker]: Bitwarden's source code has some references to Cloudflare workers being used, and during my testing I saw Cloudflare error messages about a worker throwing an error.
