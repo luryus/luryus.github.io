@@ -43,16 +43,6 @@
 
     <meta name="theme-color" content="{{ config.extra.accent }}" />
 
-    {#
-      {% if config.extra.profile_small %}
-        {% set icon = resize_image(path=config.extra.profile_small, width=48, height=48, op="fill") -%}
-        <link rel="icon" href="{{ icon.url }}" />
-        {% for size in [48,72,96,144,192,256,384,512] -%}
-          {% set icon = resize_image(path=config.extra.profile_small, width=size, height=size, op="fill") -%}
-          <link rel="apple-touch-icon" sizes="{{size}}x{{size}}" href="{{ icon.url }}" />
-        {% endfor %}
-      {% endif %}
-    #}
 
     {% if config.extra.gtag %}
       <script async src="https://www.googletagmanager.com/gtag/js?id={{ config.extra.gtag }}"></script>
@@ -133,6 +123,12 @@
           {{ config.title }}
         </a>
         <nav>
+          <a class="nav-icon" href="{{ get_url(path="atom.xml") | safe }}">
+            <i class="ri-rss-fill"></i>
+          </a>
+          <a class="nav-icon" href="https://github.com/luryus">
+            <i class="ri-github-fill"></i>
+          </a>
           {% for link in config.extra.nav %}
             <a href="{{ link.path }}">{{ link.name }}</a>
           {% endfor %}

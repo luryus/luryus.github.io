@@ -58,6 +58,7 @@ body {
 code {
   background: hsla(0, 0%, 0%, 0.04);
   padding: 0.2em 0;
+  overflow-wrap: break-word;
 
   pre > & {
     background: none;
@@ -148,9 +149,14 @@ nav {
   justify-content: flex-end;
   margin-left: auto;
 
-  > a:not(:last-child) {
-    margin-right: 1.2rem;
+  > a.nav-icon {
+    text-decoration: none;
   }
+  
+  > a {
+    margin-left: 1rem;
+  }
+
 }
 
 hr {
