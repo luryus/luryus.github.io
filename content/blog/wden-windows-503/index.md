@@ -1,5 +1,4 @@
 +++
-draft = false
 date = 2023-08-30
 title = "Debugging Windows-only 503 Errors From Bitwarden"
 draft = true
