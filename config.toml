@@ -15,6 +15,9 @@ taxonomies = [ { name = "tags" } ]
 
 generate_feed = true
 
+[slugify]
+paths_keep_dates = true
+
 
 [markdown]
 highlight_code = true
