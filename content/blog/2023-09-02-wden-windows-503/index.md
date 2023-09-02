@@ -3,7 +3,7 @@ date = 2023-09-02
 updated = 2023-09-02
 title = "Why is Bitwarden returning 503s to my Windows app?"
 authors = ["Lauri Koskela"]
-draft = true
+draft = false
 
 [taxonomies]
 tags = [ "wden", "debugging" ]
