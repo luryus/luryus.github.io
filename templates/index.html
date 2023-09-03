@@ -9,6 +9,9 @@
 {% endblock posthead %}
 
 {% block content %}
+
+  <h2>Recent posts</h2>
+
   {% set blog_section = get_section(path="blog/_index.md") %}
   {{ blog_section.content | safe }}
 
