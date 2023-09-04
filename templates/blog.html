@@ -12,10 +12,9 @@
 
   <h2>Blog posts</h2>
 
-  {% set blog_section = get_section(path="blog/_index.md") %}
-  {{ blog_section.content | safe }}
+  {{ section.content | safe }}
 
-  {% for post in blog_section.pages %}
+  {% for post in section.pages %}
     {{ post_macros::post_preview(post=post) }}
   {% endfor %}
 {% endblock content %}

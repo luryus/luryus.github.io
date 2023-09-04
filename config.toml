@@ -1,7 +1,7 @@
 # The URL the site will be built for
 base_url = "https://www.lkoskela.fi"
 
-title = "Lauri Koskela's Blog"
+title = "Lauri Koskela"
 
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
@@ -34,4 +34,4 @@ nav = [ { name = "About", path = "/about/" } ]
 accent = "#1683ac"
 accent_light = "#6c8f9d"
 dark_mode_accent = "#52b3d8"
-footer_about = "Lauri Koskela's Blog // [github.com/luryus](https://github.com/luryus)"
+footer_about = "Lauri Koskela // [github.com/luryus](https://github.com/luryus)"
