@@ -69,8 +69,12 @@ code {
 a,
 a:visited {
   color: var(--accent-color);
-  text-decoration: var(--accent-color-light) underline;
-  text-underline-offset: 5%;
+  text-decoration: var(--accent-color-light) underline 1px;
+  text-underline-position: from-font;
+}
+
+a:hover {
+  color: var(--accent-color-highlight);
 }
 
 main {
@@ -149,11 +153,9 @@ nav {
   justify-content: flex-end;
   margin-left: auto;
 
-  > a.nav-icon {
-    text-decoration: none;
-  }
-  
   > a {
+    font-weight: 500;
+    text-decoration: none;
     margin-left: 1rem;
   }
 

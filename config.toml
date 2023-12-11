@@ -36,6 +36,8 @@ highlight_themes_css = [
 dark_mode = true
 nav = [ { name = "About", path = "/about/" } ]
 accent = "#1683ac"
+accent_highlight = "#146887"
 accent_light = "#6c8f9d"
 dark_mode_accent = "#52b3d8"
+dark_mode_accent_highlight = "#66c4e8"
 footer_about = "Lauri Koskela // [github.com/luryus](https://github.com/luryus)"

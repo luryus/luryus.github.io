@@ -12,8 +12,9 @@
       :root {
         --accent-color: {{ config.extra.accent }};
         --accent-color-light: {{ config.extra.accent_light }};
+        --accent-color-highlight: {{ config.extra.accent_highlight }};
         --accent-overlay-color: #fff;
-        --body-bg: #fff;
+        --body-bg: #f7fbff;
         --body-color: #000;
         --heading-color: #000;
         --table-bg-even: #f3f3f3;
@@ -23,6 +24,7 @@
         @media (prefers-color-scheme: dark) {
           :root {
             --accent-color: {{ config.extra.dark_mode_accent }};
+            --accent-color-highlight: {{ config.extra.dark_mode_accent_highlight }};
             --accent-overlay-color: #dee2e6;
             --body-bg: #212529;
             --body-color: #abb2bf;
