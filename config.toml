@@ -15,6 +15,10 @@ taxonomies = [ { name = "tags" } ]
 
 generate_feed = true
 
+[languages.fi]
+generate_feed = false
+title = "Lauri Koskela"
+
 [slugify]
 paths_keep_dates = true
 

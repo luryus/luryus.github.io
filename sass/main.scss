@@ -113,3 +113,13 @@ table tbody tr:nth-of-type(even) {
 table tbody tr:last-of-type {
     border-bottom: 2px solid var(--accent-color);
 }
+
+div.project-card {
+  border: 1px solid var(--accent-color-light);
+  border-radius: 0.5em;
+  padding: 0 1em 0.5em 1em;
+  margin-bottom: 1em;
+  text-align: initial;
+}
+
+@import "./wattiviisari.scss";
