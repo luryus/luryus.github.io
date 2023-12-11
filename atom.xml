@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Lauri Koskela</title>
+    <link href="https://www.lkoskela.fi/atom.xml" rel="self" type="application/atom+xml"/>
+    <link href="https://www.lkoskela.fi"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2023-09-02T00:00:00+00:00</updated>
+    <id>https://www.lkoskela.fi/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Why is Bitwarden returning 503s to my Windows app?</title>
+        <published>2023-09-02T00:00:00+00:00</published>
+        <updated>2023-09-02T00:00:00+00:00</updated>
+        <author>
+          <name>Lauri Koskela</name>
+        </author>
+        <link rel="alternate" href="https://www.lkoskela.fi/blog/2023-09-02-wden-windows-503/" type="text/html"/>
+        <id>https://www.lkoskela.fi/blog/2023-09-02-wden-windows-503/</id>
+        
+        <summary type="html">&lt;p&gt;For a few years now, I&#x27;ve been developing a TUI Bitwarden client app called &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;luryus&#x2F;wden&quot;&gt;Wden&lt;&#x2F;a&gt;. While Bitwarden does not have a stable API for writing alternative clients, the APIs for the official clients have been pretty well documented by third parties. It&#x27;s not too difficult to write a client against those, but it will occasionally break when Bitwarden makes changes to their servers.&lt;&#x2F;p&gt;
+&lt;p&gt;Recently, I ran against a peculiar issue where Bitwarden started to consistently return errors to Wden, but only when running on Windows. There seemed to be no good explanation for this - the functionality is completely identical between platforms. I found the whole thing quite intriguing and I decided to write something about how I debugged the issue and worked around it.&lt;&#x2F;p&gt;
+</summary>
+        
+    </entry>
+</feed>
