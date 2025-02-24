@@ -13,16 +13,23 @@ template = "page.html"
 ## My projects
 
 {% project_card() %}
-#### [**wden**](https://github.com/luryus/wden)
+#### [wden](https://github.com/luryus/wden)
 
 A password manager TUI for Bitwarden-compatible servers. A lot more lightweight than official Bitwarden client apps. Written in Rust using the [Cursive](https://github.com/gyscos/cursive) framework.
 {% end %}
 
 
 {% project_card() %}
-#### [**Wattiviisari**](@/wattiviisari/index.md)
+#### [Wattiviisari](@/wattiviisari/index.md)
 
 A Wear OS (Android Wear) app for viewing Finnish electricity spot prices.
+{% end %}
+
+
+{% project_card() %}
+#### [RP-FC Footswitch](https://github.com/luryus/rp-fc)
+
+A GA-FC footswitch clone for Boss Katana amps, built around a Raspberry Pi Pico using embedded Rust.
 {% end %}
 
 
