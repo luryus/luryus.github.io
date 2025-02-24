@@ -13,10 +13,10 @@ theme = "simple-dev-blog"
 
 taxonomies = [ { name = "tags" } ]
 
-generate_feed = true
+generate_feeds = true
 
 [languages.fi]
-generate_feed = false
+generate_feeds = false
 title = "Lauri Koskela"
 
 [slugify]
