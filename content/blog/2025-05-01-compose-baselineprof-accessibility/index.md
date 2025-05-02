@@ -1,7 +1,7 @@
 +++
 date = 2025-05-01
 updated = 2025-05-01
-title = "Enable Jetpack Compose Accessibility in Baseline Profile Generation"
+title = "Enable Jetpack Compose Accessibility when Collecting Baseline Profiles"
 authors = ["Lauri Koskela"]
 draft = false
 
@@ -9,7 +9,7 @@ draft = false
 tags = [ "android", "uiautomator", "compose", "accessibility" ]
 +++
 
-Here's a small workaround that can be used to make Android Macrobenchmarks work better with Jetpack Compose apps. For some reason, Compose apps (at least with Compose version 1.8.0) don't emit accessibility events when running Macrobenchmarks (for example, when generating baseline profiles). With this workaround, they can be forced to be enabled, which makes a bunch of UI Automator functions work.
+Here's a small workaround that can be used to make Android Baseline Profile collection work better with Jetpack Compose apps. For some reason, Compose apps (at least with Compose version 1.8.0) don't emit accessibility events when running Macrobenchmarks (for example, when generating baseline profiles). With this workaround, they can be forced to be enabled, which makes a bunch of UI Automator functions work.
 
 <!-- more -->
 
@@ -100,7 +100,7 @@ These instructions assume that the baseline profile setup is done mostly followi
     }
     ```
 
-When the macrobenchmarks / baseline profile generation is now run, the "enabling compose accessibility overrides" should get logged. And `scrollUntil` and other UI Automator functions now work!
+When the macrobenchmarks / baseline profile collection is now run, the "enabling compose accessibility overrides" message should get logged. And `scrollUntil` and other UI Automator functions now work!
 
 In normal app builds there's no change, as the `MACROBENCHMARK` flag is kept as false.
 
@@ -109,7 +109,7 @@ Caveats:
 - This is a bit ugly, but it works.
 
 
-By implementing this, I was able to make baseline profile generation much less flaky in my app.
+By implementing this, I was able to make baseline profile collection much less flaky in my app.
 
 [^wattiviisari]: [https://lkoskela.fi/wattiviisari/](https://lkoskela.fi/wattiviisari/)
 
