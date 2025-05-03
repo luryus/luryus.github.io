@@ -1,7 +1,7 @@
 +++
 date = 2025-05-01
 updated = 2025-05-01
-title = "Enable Jetpack Compose Accessibility when Collecting Baseline Profiles"
+title = "Enable Jetpack Compose Accessibility When Collecting Baseline Profiles"
 authors = ["Lauri Koskela"]
 draft = false
 
