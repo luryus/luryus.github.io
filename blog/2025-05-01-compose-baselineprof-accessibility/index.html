@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+
+    <style>
+      :root {
+        --accent-color: #1683ac;
+        --accent-color-light: #6c8f9d;
+        --accent-color-highlight: #146887;
+        --accent-overlay-color: #fff;
+        --body-bg: #f7fbff;
+        --body-color: #000;
+        --heading-color: #000;
+        --table-bg-even: #f3f3f3;
+        --table-border-bottom: #dddddd;
+      }
+      
+        @media (prefers-color-scheme: dark) {
+          :root {
+            --accent-color: #52b3d8;
+            --accent-color-highlight: #66c4e8;
+            --accent-overlay-color: #dee2e6;
+            --body-bg: #212529;
+            --body-color: #abb2bf;
+            --heading-color: #dee2e6;
+            --table-bg-even: #2d3237;
+            --table-border-bottom: #697077;
+          }
+        }
+      
+    </style>
+
+    <meta name="theme-color" content="#1683ac" />
+
+
+    
+
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary">
+
+    
+
+    
+
+    
+      
+        <meta name="description" content="" />
+        <meta name="twitter:description" content="">
+      
+    
+
+    
+      <meta name="twitter:title" content="Enable Jetpack Compose Accessibility When Collecting Baseline Profiles">
+    
+
+    
+      <link rel="prerender" href="&#x2F;about&#x2F;" />
+    
+
+    
+    
+    <title>
+      
+        
+          Enable Jetpack Compose Accessibility When Collecting Baseline Profiles
+        
+      
+    </title>
+
+    
+    
+      <link rel="stylesheet" href="https://www.lkoskela.fi/main.css">
+    
+    
+  
+
+  
+
+  
+    <link rel="prerender"  href="https://www.lkoskela.fi/tags/android/">
+  
+    <link rel="prerender"  href="https://www.lkoskela.fi/tags/uiautomator/">
+  
+    <link rel="prerender"  href="https://www.lkoskela.fi/tags/compose/">
+  
+    <link rel="prerender"  href="https://www.lkoskela.fi/tags/accessibility/">
+  
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://google.com/article"
+      },
+      "headline": "Enable Jetpack Compose Accessibility When Collecting Baseline Profiles",
+      "image": [],
+      "datePublished": "2025-05-01T00:00:00+00:00",
+      "dateModified": "2025-05-01T00:00:00+00:00"
+    }
+  </script>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        
+
+        
+        {
+          
+          "@type": "ListItem",
+          "position": 1,
+          "name": "",
+          "item": "https://www.lkoskela.fi/"
+        },
+        
+        {
+          
+          "@type": "ListItem",
+          "position": 2,
+          "name": "",
+          "item": "https://www.lkoskela.fi/blog/"
+        },
+        
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Enable Jetpack Compose Accessibility When Collecting Baseline Profiles",
+          "item": "https://www.lkoskela.fi/blog/2025-05-01-compose-baselineprof-accessibility/"
+        }
+      ]
+    }
+  </script>
+
+  </head>
+  <body>
+    
+      <header>
+        <a class="site-name" href="/">
+          Lauri Koskela
+        </a>
+        <nav>
+          <a class="nav-icon" href="https://www.lkoskela.fi/atom.xml">
+            <i class="ri-rss-fill"></i>
+          </a>
+          <a class="nav-icon" href="https://github.com/luryus">
+            <i class="ri-github-fill"></i>
+          </a>
+          
+            <a href="&#x2F;about&#x2F;">About</a>
+          
+        </nav>
+      </header>
+    
+    <main>
+    
+  <div class="post-title">
+    <h1>Enable Jetpack Compose Accessibility When Collecting Baseline Profiles</h1>
+    <small>
+      May 01, 2025
+      
+        - 
+        <span class="tags">
+          
+            <a href="https://www.lkoskela.fi/tags/android/">android</a>
+          
+            <a href="https://www.lkoskela.fi/tags/uiautomator/">uiautomator</a>
+          
+            <a href="https://www.lkoskela.fi/tags/compose/">compose</a>
+          
+            <a href="https://www.lkoskela.fi/tags/accessibility/">accessibility</a>
+          
+        </span>
+      
+    </small>
+  </div>
+
+  <div>
+    <p>Here's a small workaround that can be used to make Android Baseline Profile collection work better with Jetpack Compose apps. For some reason, Compose apps (at least with Compose version 1.8.0) don't emit accessibility events when running Macrobenchmarks (for example, when generating baseline profiles). With this workaround, they can be forced to be enabled, which makes a bunch of UI Automator functions work.</p>
+<span id="continue-reading"></span><h3 id="ui-automator-accessibility-events">UI Automator &amp; Accessibility events</h3>
+<p>UI Automator is one of Android's UI testing frameworks, and it's the one used in Macrobenchmark and baseline profile samples and documentation. It runs outside of the app, but it can find and interact with UI elements based on their content or IDs. In theory, this should work with both View and Compose-based apps.</p>
+<p>UI Automator can leverage <em>accessibility events</em> generated by apps to have better visibility in the UI state. For instance, after making a scroll gesture, the automator framework listens for scroll accessibility events to determine when the scroll ends, and whether the end of a scrollable element was reached.</p>
+<p>Today, I was updating the baseline profiles for my Wear OS app<sup class="footnote-reference"><a href="#wattiviisari">1</a></sup>, and I tried to use the useful-sounding <a href="https://developer.android.com/reference/androidx/test/uiautomator/UiObject2#scrollUntil(androidx.test.uiautomator.Direction,androidx.test.uiautomator.Condition%3C?%20super%20androidx.test.uiautomator.UiObject2,U%3E)"><code>scrollUntil</code> function</a>: scroll down until a specific UI element is visible. Simple, right? Unfortunately, I was faced with the benchmark crashing, and there were these kinds of exceptions in the logs:</p>
+<pre class="z-code"><code><span class="z-text z-plain">Timed out waiting 1000ms on the condition.
+</span><span class="z-text z-plain">java.util.concurrent.TimeoutException: Expected event not received within: 1000 ms among: []
+</span><span class="z-text z-plain">    at android.app.UiAutomation.executeAndWaitForEvent(UiAutomation.java:950)
+</span><span class="z-text z-plain">    at androidx.test.uiautomator.UiDevice.performActionAndWait(UiDevice.java:220)
+</span><span class="z-text z-plain">    at androidx.test.uiautomator.GestureController.performGestureAndWait(GestureController.java:98)
+</span><span class="z-text z-plain">    at androidx.test.uiautomator.UiObject2.scrollUntil(UiObject2.java:897)
+</span></code></pre>
+<p>Followed by:</p>
+<pre class="z-code"><code><span class="z-text z-plain">scrollUntil reached max retries for null events.
+</span></code></pre>
+<p>A little debugging revealed that <code>scrollUntil</code> was not scrolling to the end of the list (where the target button was), because it was not seeing the scrolls at all! No scroll accessibility events were sent by the app. And without those, <code>scrollUntil</code> just bails out after a few tries, because it can't really know if it's even doing anything.</p>
+<h3 id="identifying-the-bug">Identifying the bug</h3>
+<p>After a couple of side quests<sup class="footnote-reference"><a href="#sidequest">2</a></sup> I landed on this issue on Google's issue tracker: <a href="https://issuetracker.google.com/issues/342316793">https://issuetracker.google.com/issues/342316793</a>. This is exactly the issue I had. Apparently, Compose explicitly disables accessibility events for UI automator for <em>some</em> reason unknown to me.</p>
+<p>A workaround (used in some benchmarks in Compose itself) is linked in the issue comments. It uses <a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/node/RootForTest#forceAccessibilityForTesting(kotlin.Boolean)">an API exposed in Compose</a> to <em>force</em> accessibility on. However, the linked workaround is not directly applicable to my case: it creates the Compose view itself and can therefore force accessibility on directly in the test code. That does not work for me, because in my case the views are created by the benchmarked app, not the test code.</p>
+<h3 id="adapted-workaround">Adapted workaround</h3>
+<p>The idea is simple: add a <code>BuildConfig</code> flag that's true when generating baseline profiles, and false otherwise. Then, check the flag in the app, and if it's true, make the app itself force accessibility on.</p>
+<p>These instructions assume that the baseline profile setup is done mostly following <a href="https://developer.android.com/topic/performance/baselineprofiles/create-baselineprofile">the official guidelines</a>, and that <a href="https://developer.android.com/topic/performance/baselineprofiles/configure-baselineprofiles#variant-specific-dependencies">the automatically generated build types</a> are used.</p>
+<ol>
+<li>
+<p>In the <code>build.gradle.kts</code> file for the main app module (in my setup, <code>app/build.gradle.kts</code>), add these configurations:</p>
+<pre data-lang="kotlin" class="language-kotlin z-code"><code class="language-kotlin" data-lang="kotlin"><span class="z-source z-Kotlin">android {
+</span><span class="z-source z-Kotlin">    <span class="z-comment z-line z-double-slash z-kotlin"><span class="z-punctuation z-definition z-comment z-kotlin">//</span> ...        
+</span></span><span class="z-source z-Kotlin">    defaultConfig {
+</span><span class="z-source z-Kotlin">        <span class="z-comment z-line z-double-slash z-kotlin"><span class="z-punctuation z-definition z-comment z-kotlin">//</span> ...
+</span></span><span class="z-source z-Kotlin">        buildConfigField(<span class="z-string z-quoted z-double z-kotlin"><span class="z-punctuation z-definition z-string z-begin z-kotlin">&quot;</span>boolean<span class="z-punctuation z-definition z-string z-end z-kotlin">&quot;</span></span>, <span class="z-string z-quoted z-double z-kotlin"><span class="z-punctuation z-definition z-string z-begin z-kotlin">&quot;</span>MACROBENCHMARK<span class="z-punctuation z-definition z-string z-end z-kotlin">&quot;</span></span>, <span class="z-string z-quoted z-double z-kotlin"><span class="z-punctuation z-definition z-string z-begin z-kotlin">&quot;</span>false<span class="z-punctuation z-definition z-string z-end z-kotlin">&quot;</span></span>)
+</span><span class="z-source z-Kotlin">    }
+</span><span class="z-source z-Kotlin">
+</span><span class="z-source z-Kotlin">    buildTypes {
+</span><span class="z-source z-Kotlin">        <span class="z-comment z-line z-double-slash z-kotlin"><span class="z-punctuation z-definition z-comment z-kotlin">//</span> ...
+</span></span><span class="z-source z-Kotlin">
+</span><span class="z-source z-Kotlin">        <span class="z-comment z-line z-double-slash z-kotlin"><span class="z-punctuation z-definition z-comment z-kotlin">//</span> benchmarkRelease and nonMinifiedRelease are created by the Baseline Profile Gradle plugin
+</span></span><span class="z-source z-Kotlin">        create(<span class="z-string z-quoted z-double z-kotlin"><span class="z-punctuation z-definition z-string z-begin z-kotlin">&quot;</span>benchmarkRelease<span class="z-punctuation z-definition z-string z-end z-kotlin">&quot;</span></span>) {
+</span><span class="z-source z-Kotlin">            buildConfigField(<span class="z-string z-quoted z-double z-kotlin"><span class="z-punctuation z-definition z-string z-begin z-kotlin">&quot;</span>boolean<span class="z-punctuation z-definition z-string z-end z-kotlin">&quot;</span></span>, <span class="z-string z-quoted z-double z-kotlin"><span class="z-punctuation z-definition z-string z-begin z-kotlin">&quot;</span>MACROBENCHMARK<span class="z-punctuation z-definition z-string z-end z-kotlin">&quot;</span></span>, <span class="z-string z-quoted z-double z-kotlin"><span class="z-punctuation z-definition z-string z-begin z-kotlin">&quot;</span>true<span class="z-punctuation z-definition z-string z-end z-kotlin">&quot;</span></span>)
+</span><span class="z-source z-Kotlin">        }
+</span><span class="z-source z-Kotlin">        create(<span class="z-string z-quoted z-double z-kotlin"><span class="z-punctuation z-definition z-string z-begin z-kotlin">&quot;</span>nonMinifiedRelease<span class="z-punctuation z-definition z-string z-end z-kotlin">&quot;</span></span>) {
+</span><span class="z-source z-Kotlin">            buildConfigField(<span class="z-string z-quoted z-double z-kotlin"><span class="z-punctuation z-definition z-string z-begin z-kotlin">&quot;</span>boolean<span class="z-punctuation z-definition z-string z-end z-kotlin">&quot;</span></span>, <span class="z-string z-quoted z-double z-kotlin"><span class="z-punctuation z-definition z-string z-begin z-kotlin">&quot;</span>MACROBENCHMARK<span class="z-punctuation z-definition z-string z-end z-kotlin">&quot;</span></span>, <span class="z-string z-quoted z-double z-kotlin"><span class="z-punctuation z-definition z-string z-begin z-kotlin">&quot;</span>true<span class="z-punctuation z-definition z-string z-end z-kotlin">&quot;</span></span>) 
+</span><span class="z-source z-Kotlin">        }
+</span><span class="z-source z-Kotlin">    }
+</span><span class="z-source z-Kotlin">}
+</span></code></pre>
+</li>
+<li>
+<p>Define this composable function:</p>
+<pre data-lang="kotlin" class="language-kotlin z-code"><code class="language-kotlin" data-lang="kotlin"><span class="z-source z-Kotlin">@Composable
+</span><span class="z-source z-Kotlin"><span class="z-keyword z-other z-kotlin">fun</span> <span class="z-entity z-name z-function z-kotlin">EnableBenchmarkAccessibilityOverride</span>() {
+</span><span class="z-source z-Kotlin">    <span class="z-comment z-line z-double-slash z-kotlin"><span class="z-punctuation z-definition z-comment z-kotlin">//</span> Work around compose not sending accessibility events for UiAutomator
+</span></span><span class="z-source z-Kotlin">    <span class="z-comment z-line z-double-slash z-kotlin"><span class="z-punctuation z-definition z-comment z-kotlin">//</span> Ref: https://issuetracker.google.com/issues/342316793
+</span></span><span class="z-source z-Kotlin">    <span class="z-keyword z-other z-kotlin">val</span> <span class="z-entity z-name z-variable z-kotlin">view</span> <span class="z-keyword z-operator z-assignment z-kotlin">=</span> LocalView<span class="z-keyword z-operator z-dot z-kotlin">.</span>current
+</span><span class="z-source z-Kotlin">    LaunchedEffect(<span class="z-storage z-type z-buildin z-kotlin">Unit</span>) {
+</span><span class="z-source z-Kotlin">        <span class="z-keyword z-control z-kotlin">if</span> (BuildConfig<span class="z-keyword z-operator z-dot z-kotlin">.</span><span class="z-constant z-other z-kotlin">MACROBENCHMARK</span>) {
+</span><span class="z-source z-Kotlin">            Log<span class="z-keyword z-operator z-dot z-kotlin">.</span>d(<span class="z-constant z-other z-kotlin">TAG</span>, <span class="z-string z-quoted z-double z-kotlin"><span class="z-punctuation z-definition z-string z-begin z-kotlin">&quot;</span>EnableBenchmarkAccessibilityOverride: MACROBENCHMARK flag set; <span class="z-punctuation z-definition z-string z-end z-kotlin">&quot;</span></span> <span class="z-keyword z-operator z-arithmetic z-kotlin">+</span>
+</span><span class="z-source z-Kotlin">                       <span class="z-string z-quoted z-double z-kotlin"><span class="z-punctuation z-definition z-string z-begin z-kotlin">&quot;</span>enabling compose accessibility overrides<span class="z-punctuation z-definition z-string z-end z-kotlin">&quot;</span></span>)
+</span><span class="z-source z-Kotlin">            (view <span class="z-keyword z-operator z-kotlin">as</span> RootForTest)<span class="z-keyword z-operator z-dot z-kotlin">.</span>apply {
+</span><span class="z-source z-Kotlin">                setAccessibilityEventBatchIntervalMillis(<span class="z-constant z-numeric z-kotlin">0L</span>)
+</span><span class="z-source z-Kotlin">                forceAccessibilityForTesting(<span class="z-constant z-language z-kotlin">true</span>)
+</span><span class="z-source z-Kotlin">            }
+</span><span class="z-source z-Kotlin">        }
+</span><span class="z-source z-Kotlin">    }
+</span><span class="z-source z-Kotlin">}
+</span></code></pre>
+</li>
+<li>
+<p>In all Compose entry points (activities, fragments, <code>ComposeViews</code>...) add the previously defined composable. For example, in my <code>MainActivity</code>, I did:</p>
+<pre data-lang="kotlin" class="language-kotlin z-code"><code class="language-kotlin" data-lang="kotlin"><span class="z-source z-Kotlin">setContent {
+</span><span class="z-source z-Kotlin">    EnableBenchmarkAccessibilityOverride()
+</span><span class="z-source z-Kotlin">    WearApp()
+</span><span class="z-source z-Kotlin">}
+</span></code></pre>
+</li>
+</ol>
+<p>When the macrobenchmarks / baseline profile collection is now run, the "enabling compose accessibility overrides" message should get logged. And <code>scrollUntil</code> and other UI Automator functions now work!</p>
+<p>In normal app builds there's no change, as the <code>MACROBENCHMARK</code> flag is kept as false.</p>
+<p>Caveats:</p>
+<ul>
+<li>The override call must be added manually in all Compose entry points. With larger hybrid apps, with a lot of fragments or compose views, this could be a problem.</li>
+<li>This is a bit ugly, but it works.</li>
+</ul>
+<p>By implementing this, I was able to make baseline profile collection much less flaky in my app.</p>
+<div class="footnote-definition" id="wattiviisari"><sup class="footnote-definition-label">1</sup>
+<p><a href="https://lkoskela.fi/wattiviisari/">https://lkoskela.fi/wattiviisari/</a></p>
+</div>
+<div class="footnote-definition" id="sidequest"><sup class="footnote-definition-label">2</sup>
+<p>I tried to see if I could use the Compose UI testing framework with Macrobenchmarks — it would have much better integration with compose views. Unfortunately, it does not work (<a href="https://slack-chats.kotlinlang.org/t/27615420/is-it-possible-to-use-composetestrule-for-ui-automation-when#d8ed7b41-a168-4cbb-9711-264ef8256971">confirmed on the #compose-wear Slack channel</a>).</p>
+</div>
+
+  </div>
+
+  <hr class="footer-rule" />
+
+  
+    <div class="footer-about">
+      <p>Lauri Koskela // <a href="https://github.com/luryus">github.com/luryus</a></p>
+
+    </div>
+  
+
+  <div class="related-container">
+
+    
+
+    
+
+  </div>
+
+
+    </main>
+    <footer class="footer-page">
+    
+      
+    
+    </footer>
+  </body>
+</html>
