@@ -15,7 +15,7 @@ jobs:
       - name: theme_cleanup
         run: "rm -rf themes/simple-dev-blog/static"
       - name: build_and_deploy
-        uses: shalzz/zola-deploy-action@v0.20.0
+        uses: shalzz/zola-deploy-action@v0.21.0
         env:
           # Target branch
           PAGES_BRANCH: gh-pages
