@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+
+    <style>
+      :root {
+        --accent-color: #1683ac;
+        --accent-color-light: #6c8f9d;
+        --accent-color-highlight: #146887;
+        --accent-overlay-color: #fff;
+        --body-bg: #f7fbff;
+        --body-color: #000;
+        --heading-color: #000;
+        --table-bg-even: #f3f3f3;
+        --table-border-bottom: #dddddd;
+      }
+      
+        @media (prefers-color-scheme: dark) {
+          :root {
+            --accent-color: #52b3d8;
+            --accent-color-highlight: #66c4e8;
+            --accent-overlay-color: #dee2e6;
+            --body-bg: #212529;
+            --body-color: #abb2bf;
+            --heading-color: #dee2e6;
+            --table-bg-even: #2d3237;
+            --table-border-bottom: #697077;
+          }
+        }
+      
+    </style>
+
+    <meta name="theme-color" content="#1683ac" />
+
+
+    
+
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary">
+
+    
+
+    
+
+    
+      
+        <meta name="description" content="" />
+        <meta name="twitter:description" content="">
+      
+    
+
+    
+      <meta name="twitter:title" content="Loopback UDP broadcasts and multiple listeners">
+    
+
+    
+      <link rel="prerender" href="&#x2F;about&#x2F;" />
+    
+
+    
+    
+    <title>
+      
+        
+          Loopback UDP broadcasts and multiple listeners
+        
+      
+    </title>
+
+    
+    
+      <link rel="stylesheet" href="https://www.lkoskela.fi/main.css">
+    
+    
+  
+
+  
+
+  
+    <link rel="prerender"  href="https://www.lkoskela.fi/tags/linux/">
+  
+    <link rel="prerender"  href="https://www.lkoskela.fi/tags/networking/">
+  
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://google.com/article"
+      },
+      "headline": "Loopback UDP broadcasts and multiple listeners",
+      "image": [],
+      "datePublished": "2025-10-19T00:00:00+00:00",
+      "dateModified": "2025-10-19T00:00:00+00:00"
+    }
+  </script>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        
+
+        
+        {
+          
+          "@type": "ListItem",
+          "position": 1,
+          "name": "",
+          "item": "https://www.lkoskela.fi/"
+        },
+        
+        {
+          
+          "@type": "ListItem",
+          "position": 2,
+          "name": "",
+          "item": "https://www.lkoskela.fi/blog/"
+        },
+        
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Loopback UDP broadcasts and multiple listeners",
+          "item": "https://www.lkoskela.fi/blog/2025-10-19-udp-loopback-bcast/"
+        }
+      ]
+    }
+  </script>
+
+  </head>
+  <body>
+    
+      <header>
+        <a class="site-name" href="/">
+          Lauri Koskela
+        </a>
+        <nav>
+          <a class="nav-icon" href="https://www.lkoskela.fi/atom.xml">
+            <i class="ri-rss-fill"></i>
+          </a>
+          <a class="nav-icon" href="https://github.com/luryus">
+            <i class="ri-github-fill"></i>
+          </a>
+          
+            <a href="&#x2F;about&#x2F;">About</a>
+          
+        </nav>
+      </header>
+    
+    <main>
+    
+  <div class="post-title">
+    <h1>Loopback UDP broadcasts and multiple listeners</h1>
+    <small>
+      October 19, 2025
+      
+        - 
+        <span class="tags">
+          
+            <a href="https://www.lkoskela.fi/tags/linux/">linux</a>
+          
+            <a href="https://www.lkoskela.fi/tags/networking/">networking</a>
+          
+        </span>
+      
+    </small>
+  </div>
+
+  <div>
+    <p>I ran into a situation where multiple processes needed to receive all UDP datagrams sent from a service running on the same host. The sender already set <code>SO_BROADCAST</code>, and I thought setting the target host to <code>127.255.255.255</code> should be enough to make things work. And of course, the clients must use the same host and specify <code>SO_REUSEADDR</code> so that they receive the packets. But the reason <em>why</em> this works is more interesting.</p>
+<span id="continue-reading"></span>
+<p>UDP broadcasts on the loopback interface are  OS-specific, and can't be relied upon to work on all platforms. I couldn't find any clearly written information about this on the Web, probably just because of this platform specificity. And most of the slop machines<sup class="footnote-reference"><a href="#slop-machines">1</a></sup> I tried did not generate anything useful when asking about UDP broadcasts on localhost. Various Stack Exchange posts indicate that <a href="https://serverfault.com/questions/553898/what-is-the-equivalent-of-127-255-255-255-for-os-x-machines-so-i-can-test-broadc">this works on Linux but not on macOS</a>.</p>
+<p>The <em>correct</em> way to handle this kind of situation would probably be multicast sockets, or even some other IPC solution. But UDP broadcasts was what I had here.</p>
+<h2 id="how-it-works">How It Works</h2>
+<ol>
+<li>In the UDP sender, enable <code>SO_BROADCAST</code> on the UDP socket. Send the packets to the host <code>127.255.255.255</code>, and a port of your choosing.</li>
+<li>In the receivers, enable <code>SO_REUSEADDR</code> on the listening socket. Bind the socket to <code>127.255.255.255</code> and the appropriate UDP port.</li>
+</ol>
+<p>With this specific configuration, every active listener gets every datagram sent by the sender. Listeners can freely come and go, and everything just works.</p>
+<p>If the sender and receivers use any other address in the <code>127.0.0.0/8</code> range, only one of the receivers will get the datagrams. So using the "broadcast" address (<code>127.255.255.255</code>) is important, even though this is not really broadcasting.</p>
+<p>Here's a Python script that demonstrates this behaviour. Run the sender with <code>python3 udp.py sender</code>, and receivers with <code>python3 udp.py receiver</code>.</p>
+<pre data-lang="py" class="language-py z-code"><code class="language-py" data-lang="py"><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">socket</span></span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">time</span></span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">argparse</span></span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">PORT</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-constant z-numeric z-integer z-decimal z-python">5005</span>
+</span><span class="z-source z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">MESSAGE</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-storage z-type z-string z-python">b</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&#39;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python">Hello from sender<span class="z-punctuation z-definition z-string z-end z-python">&#39;</span></span></span>
+</span><span class="z-source z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">BROADCAST_IP</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&#39;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python">127.255.255.255<span class="z-punctuation z-definition z-string z-end z-python">&#39;</span></span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">parser</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">argparse</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">ArgumentParser</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">parser</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">add_argument</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&#39;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python">mode<span class="z-punctuation z-definition z-string z-end z-python">&#39;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-variable z-parameter z-python">choices</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-sequence z-list z-python"><span class="z-punctuation z-section z-sequence z-begin z-python">[</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&#39;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python">sender<span class="z-punctuation z-definition z-string z-end z-python">&#39;</span></span></span><span class="z-punctuation z-separator z-sequence z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&#39;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python">receiver<span class="z-punctuation z-definition z-string z-end z-python">&#39;</span></span></span><span class="z-punctuation z-section z-sequence z-end z-python">]</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">args</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">parser</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">parse_args</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-statement z-conditional z-if z-python"><span class="z-keyword z-control z-conditional z-if z-python">if</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">args</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">mode</span></span> <span class="z-keyword z-operator z-comparison z-python">==</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&#39;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-single z-python">sender<span class="z-punctuation z-definition z-string z-end z-python">&#39;</span></span></span><span class="z-punctuation z-section z-block z-conditional z-if z-python">:</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">s</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">socket</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">socket</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">socket</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-variable z-other z-constant z-python">AF_INET</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">socket</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-variable z-other z-constant z-python">SOCK_DGRAM</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">s</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">setsockopt</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">socket</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-variable z-other z-constant z-python">SOL_SOCKET</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">socket</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-variable z-other z-constant z-python">SO_BROADCAST</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-constant z-numeric z-integer z-decimal z-python">1</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-statement z-loop z-while z-python"><span class="z-keyword z-control z-loop z-while z-python">while</span> <span class="z-constant z-language z-python">True</span><span class="z-punctuation z-section z-block z-loop z-while z-python">:</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">s</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">sendto</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">MESSAGE</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-sequence z-tuple z-python"><span class="z-punctuation z-section z-sequence z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">BROADCAST_IP</span></span><span class="z-punctuation z-separator z-sequence z-python">,</span> <span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">PORT</span></span><span class="z-punctuation z-section z-sequence z-end z-python">)</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-function z-builtin z-python">print</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">time</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">time</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">Sent message<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">time</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">sleep</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-constant z-numeric z-integer z-decimal z-python">1</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-conditional z-else z-python"><span class="z-keyword z-control z-conditional z-else z-python">else</span><span class="z-punctuation z-section z-block z-conditional z-else z-python">:</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">s</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">socket</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">socket</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">socket</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-variable z-other z-constant z-python">AF_INET</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">socket</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-variable z-other z-constant z-python">SOCK_DGRAM</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">s</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">setsockopt</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">socket</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-variable z-other z-constant z-python">SOL_SOCKET</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">socket</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-variable z-other z-constant z-python">SO_REUSEADDR</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-constant z-numeric z-integer z-decimal z-python">1</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">s</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">bind</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-sequence z-tuple z-python"><span class="z-punctuation z-section z-sequence z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">BROADCAST_IP</span></span><span class="z-punctuation z-separator z-sequence z-python">,</span> <span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">PORT</span></span><span class="z-punctuation z-section z-sequence z-end z-python">)</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-statement z-loop z-while z-python"><span class="z-keyword z-control z-loop z-while z-python">while</span> <span class="z-constant z-language z-python">True</span><span class="z-punctuation z-section z-block z-loop z-while z-python">:</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">data</span></span>, <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">addr</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">s</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">recvfrom</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-constant z-numeric z-integer z-decimal z-python">1024</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-function z-builtin z-python">print</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">time</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">time</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-storage z-type z-string z-python">f</span><span class="z-meta z-string z-interpolated z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-interpolated z-python"><span class="z-string z-quoted z-double z-python">Received from </span><span class="z-meta z-interpolation z-python"><span class="z-punctuation z-section z-interpolation z-begin z-python">{</span><span class="z-source z-python z-embedded"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">addr</span></span></span></span><span class="z-meta z-interpolation z-python"><span class="z-punctuation z-section z-interpolation z-end z-python">}</span></span><span class="z-string z-quoted z-double z-python">: </span><span class="z-meta z-interpolation z-python"><span class="z-punctuation z-section z-interpolation z-begin z-python">{</span><span class="z-source z-python z-embedded"><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">data</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">decode</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span></span></span><span class="z-meta z-interpolation z-python"><span class="z-punctuation z-section z-interpolation z-end z-python">}</span></span><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span></code></pre>
+<p>My understanding is that broadcast traffic on the loopback interfaces is somewhat undefined behaviour. The loopback interface does not even have the <code>BROADCAST</code> flag like other interfaces do:</p>
+<pre class="z-code"><code><span class="z-text z-plain">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+</span><span class="z-text z-plain">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+</span><span class="z-text z-plain">2: enp0s31f6: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu 1500 qdisc fq_codel state DOWN mode DEFAULT group default qlen 1000
+</span><span class="z-text z-plain">    link/ether 02:00:f0:9f:92:a9 brd ff:ff:ff:ff:ff:ff
+</span><span class="z-text z-plain">    altname enx0200f09f92a9
+</span></code></pre>
+<p>It looks like the UDP stack in the kernel still runs the broadcast logic for loopback datagrams anyway. <code>127.255.255.255</code> is handled as the broadcast address for the loopback network, and therefore all listeners receive the datagrams.</p>
+<h2 id="os-compatibility">OS Compatibility</h2>
+<p>I tested older Linux versions and some other OSes to get an idea of how usable this thing is.</p>
+<ul>
+<li>
+<p><strong>Modern Linux kernels</strong> work (I tested on 6.16.x)</p>
+</li>
+<li>
+<p><strong>Older Linux versions</strong> work. I tested Ubuntu 14.04 with kernel 3.13.0. So Linux has worked this way for a long time, and hopefully will keep working.</p>
+</li>
+<li>
+<p><strong>FreeBSD</strong> does not seem to have this behaviour. <a href="https://mail-archive.freebsd.org/cgi/getmsg.cgi?fetch=249789+0+archive/2002/freebsd-net/20021208.freebsd-net">Here's an old mailing list post that touches upon this topic.</a></p>
+</li>
+<li>
+<p><strong>Windows</strong> (11) has its own broadcast specialties. Unlike Linux, Windows forwards broadcast datagrams to sockets bound to a single host address<sup class="footnote-reference"><a href="#windows-issue">2</a></sup>. So broadcasts sent to <code>127.255.255.255</code> can be received by sockets bound to <code>127.0.0.1</code>. But sockets can't bind to <code>127.255.255.255</code>. So the local broadcasts work, but a bit differently than on Linux.</p>
+</li>
+<li>
+<p><strong>MacOS:</strong> I don't have a Mac to test with, but <a href="https://serverfault.com/questions/553898/what-is-the-equivalent-of-127-255-255-255-for-os-x-machines-so-i-can-test-broadc">the Internet tells me</a> macOS does not support the local broadcasts. I would imagine the behaviour is somewhat similar to FreeBSD.</p>
+</li>
+</ul>
+<p>Looks like there's no simple cross-platform solution for this. Better to just switch to multicasts if this kind of functionality is needed on OSes other than Linux or Windows.</p>
+<div class="footnote-definition" id="slop-machines"><sup class="footnote-definition-label">1</sup>
+<p>Claude was the winner here, pointing me directly to the correct solution. ChatGPT and Gemini just yapped about multicast, which is technically a way to achieve the same results, but was not what I asked. I'm sure I could get the right code out of them with more prompting, but the problem was that my initial question (before I knew if this was even possible) did not produce the right answers.</p>
+</div>
+<div class="footnote-definition" id="windows-issue"><sup class="footnote-definition-label">2</sup>
+<p><a href="https://github.com/dotnet/runtime/issues/83525#issuecomment-1487601420">Dotnet Runtime issue #83525</a> explains this difference.</p>
+</div>
+
+  </div>
+
+  <hr class="footer-rule" />
+
+  
+    <div class="footer-about">
+      <p>Lauri Koskela // <a href="https://github.com/luryus">github.com/luryus</a></p>
+
+    </div>
+  
+
+  <div class="related-container">
+
+    
+
+    
+
+  </div>
+
+
+    </main>
+    <footer class="footer-page">
+    
+      
+    
+    </footer>
+  </body>
+</html>

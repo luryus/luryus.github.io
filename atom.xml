@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Lauri Koskela</title>
+    <link rel="self" type="application/atom+xml" href="https://www.lkoskela.fi/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://www.lkoskela.fi"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2025-10-19T00:00:00+00:00</updated>
+    <id>https://www.lkoskela.fi/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Loopback UDP broadcasts and multiple listeners</title>
+        <published>2025-10-19T00:00:00+00:00</published>
+        <updated>2025-10-19T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Lauri Koskela
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://www.lkoskela.fi/blog/2025-10-19-udp-loopback-bcast/"/>
+        <id>https://www.lkoskela.fi/blog/2025-10-19-udp-loopback-bcast/</id>
+        
+        <summary type="html">&lt;p&gt;I ran into a situation where multiple processes needed to receive all UDP datagrams sent from a service running on the same host. The sender already set &lt;code&gt;SO_BROADCAST&lt;&#x2F;code&gt;, and I thought setting the target host to &lt;code&gt;127.255.255.255&lt;&#x2F;code&gt; should be enough to make things work. And of course, the clients must use the same host and specify &lt;code&gt;SO_REUSEADDR&lt;&#x2F;code&gt; so that they receive the packets. But the reason &lt;em&gt;why&lt;&#x2F;em&gt; this works is more interesting.&lt;&#x2F;p&gt;</summary>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Enable Jetpack Compose Accessibility When Collecting Baseline Profiles</title>
+        <published>2025-05-01T00:00:00+00:00</published>
+        <updated>2025-05-01T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Lauri Koskela
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://www.lkoskela.fi/blog/2025-05-01-compose-baselineprof-accessibility/"/>
+        <id>https://www.lkoskela.fi/blog/2025-05-01-compose-baselineprof-accessibility/</id>
+        
+        <summary type="html">&lt;p&gt;Here&#x27;s a small workaround that can be used to make Android Baseline Profile collection work better with Jetpack Compose apps. For some reason, Compose apps (at least with Compose version 1.8.0) don&#x27;t emit accessibility events when running Macrobenchmarks (for example, when generating baseline profiles). With this workaround, they can be forced to be enabled, which makes a bunch of UI Automator functions work.&lt;&#x2F;p&gt;</summary>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Why is Bitwarden returning 503s to my Windows app?</title>
+        <published>2023-09-02T00:00:00+00:00</published>
+        <updated>2023-09-02T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Lauri Koskela
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://www.lkoskela.fi/blog/2023-09-02-wden-windows-503/"/>
+        <id>https://www.lkoskela.fi/blog/2023-09-02-wden-windows-503/</id>
+        
+        <summary type="html">&lt;p&gt;For a few years now, I&#x27;ve been developing a TUI Bitwarden client app called &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;luryus&#x2F;wden&quot;&gt;Wden&lt;&#x2F;a&gt;. While Bitwarden does not have a stable API for writing alternative clients, the APIs for the official clients have been pretty well documented by third parties. It&#x27;s not too difficult to write a client against those, but it will occasionally break when Bitwarden makes changes to their servers.&lt;&#x2F;p&gt;
+&lt;p&gt;Recently, I ran against a peculiar issue where Bitwarden started to consistently return errors to Wden, but only when running on Windows. There seemed to be no good explanation for this - the functionality is completely identical between platforms. I found the whole thing quite intriguing and I decided to write something about how I debugged the issue and worked around it.&lt;&#x2F;p&gt;</summary>
+        
+    </entry>
+</feed>

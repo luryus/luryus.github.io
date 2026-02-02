@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+
+    <style>
+      :root {
+        --accent-color: #1683ac;
+        --accent-color-light: #6c8f9d;
+        --accent-color-highlight: #146887;
+        --accent-overlay-color: #fff;
+        --body-bg: #f7fbff;
+        --body-color: #000;
+        --heading-color: #000;
+        --table-bg-even: #f3f3f3;
+        --table-border-bottom: #dddddd;
+      }
+      
+        @media (prefers-color-scheme: dark) {
+          :root {
+            --accent-color: #52b3d8;
+            --accent-color-highlight: #66c4e8;
+            --accent-overlay-color: #dee2e6;
+            --body-bg: #212529;
+            --body-color: #abb2bf;
+            --heading-color: #dee2e6;
+            --table-bg-even: #2d3237;
+            --table-border-bottom: #697077;
+          }
+        }
+      
+    </style>
+
+    <meta name="theme-color" content="#1683ac" />
+
+
+    
+
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary">
+
+    
+
+    
+
+    
+      
+        <meta name="description" content="" />
+        <meta name="twitter:description" content="">
+      
+    
+
+    
+      <meta name="twitter:title" content="Lauri Koskela">
+    
+
+    
+      <link rel="prerender" href="&#x2F;about&#x2F;" />
+    
+
+    
+    
+    <title>
+      
+        
+          Lauri Koskela
+        
+      
+    </title>
+
+    
+    
+      <link rel="stylesheet" href="https://www.lkoskela.fi/main.css">
+    
+     
+  
+    <link rel="prerender" href="https:&#x2F;&#x2F;www.lkoskela.fi&#x2F;blog&#x2F;2025-10-19-udp-loopback-bcast&#x2F;" />
+  
+
+  </head>
+  <body>
+    
+      <header>
+        <a class="site-name" href="/">
+          Lauri Koskela
+        </a>
+        <nav>
+          <a class="nav-icon" href="https://www.lkoskela.fi/atom.xml">
+            <i class="ri-rss-fill"></i>
+          </a>
+          <a class="nav-icon" href="https://github.com/luryus">
+            <i class="ri-github-fill"></i>
+          </a>
+          
+            <a href="&#x2F;about&#x2F;">About</a>
+          
+        </nav>
+      </header>
+    
+    <main>
+    
+  <h1>1 pages tagged with "linux"</h1>
+  <div class="taxonomy-container">
+    
+      
+  <div class="post-preview">
+    <h3 class="post-title"><a href="https:&#x2F;&#x2F;www.lkoskela.fi&#x2F;blog&#x2F;2025-10-19-udp-loopback-bcast&#x2F;">Loopback UDP broadcasts and multiple listeners</a></h3>
+    <small>
+      October 19, 2025 - 708 words - 4 mins
+    </small>
+    <div class="summary">
+      <p>I ran into a situation where multiple processes needed to receive all UDP datagrams sent from a service running on the same host. The sender already set <code>SO_BROADCAST</code>, and I thought setting the target host to <code>127.255.255.255</code> should be enough to make things work. And of course, the clients must use the same host and specify <code>SO_REUSEADDR</code> so that they receive the packets. But the reason <em>why</em> this works is more interesting.</p>
+      
+      <a href="https:&#x2F;&#x2F;www.lkoskela.fi&#x2F;blog&#x2F;2025-10-19-udp-loopback-bcast&#x2F;">read more</a>
+    </div>
+  </div>
+
+    
+  </div>
+
+    </main>
+    <footer class="footer-page">
+    
+      
+    
+    </footer>
+  </body>
+</html>
