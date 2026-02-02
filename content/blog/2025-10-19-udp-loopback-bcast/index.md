@@ -75,7 +75,7 @@ I tested older Linux versions and some other OSes to get an idea of how usable t
 - **Older Linux versions** work. I tested Ubuntu 14.04 with kernel 3.13.0. So Linux has worked this way for a long time, and hopefully will keep working.
 
 - **FreeBSD** does not seem to have this behaviour. [Here's an old mailing list post that touches upon this topic.](https://mail-archive.freebsd.org/cgi/getmsg.cgi?fetch=249789+0+archive/2002/freebsd-net/20021208.freebsd-net)
-- **Windows** (11) has its own broadcast specialties. Unlike Linux, Windows forwards broadcast datagrams to sockets bound to a single host address[^windows-issue]. So broadcasts sent to `127.255.255.255` can be received by sockets bound to `127.0.0.1`. But sockets can't bind to `127.255.255.255`. So the local broadcasts work, but a bit different to Linux.
+- **Windows** (11) has its own broadcast specialties. Unlike Linux, Windows forwards broadcast datagrams to sockets bound to a single host address[^windows-issue]. So broadcasts sent to `127.255.255.255` can be received by sockets bound to `127.0.0.1`. But sockets can't bind to `127.255.255.255`. So the local broadcasts work, but a bit differently than on Linux.
 - **MacOS:** I don't have a Mac to test with, but [the Internet tells me](https://serverfault.com/questions/553898/what-is-the-equivalent-of-127-255-255-255-for-os-x-machines-so-i-can-test-broadc) macOS does not support the local broadcasts. I would imagine the behaviour is somewhat similar to FreeBSD.
 
 Looks like there's no simple cross-platform solution for this. Better to just switch to multicasts if this kind of functionality is needed on OSes other than Linux or Windows.
@@ -83,4 +83,4 @@ Looks like there's no simple cross-platform solution for this. Better to just sw
 
 [^slop-machines]: Claude was the winner here, pointing me directly to the correct solution. ChatGPT and Gemini just yapped about multicast, which is technically a way to achieve the same results, but was not what I asked. I'm sure I could get the right code out of them with more prompting, but the problem was that my initial question (before I knew if this was even possible) did not produce the right answers.
 
-[^windows-issue]: [Dotnet Runtime issue #83525](https://github.com/dotnet/runtime/issues/83525#issuecomment-1487601420) erxplains this difference.
+[^windows-issue]: [Dotnet Runtime issue #83525](https://github.com/dotnet/runtime/issues/83525#issuecomment-1487601420) explains this difference.
