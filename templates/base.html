@@ -19,6 +19,10 @@
         --heading-color: #000;
         --table-bg-even: #f3f3f3;
         --table-border-bottom: #dddddd;
+        --code-block-border-color: var(--accent-color-light);
+        {# The code block colors come from the giallo code styles #}
+        --code-block-scrollbar-thumb: #565869;
+        --code-block-scrollbar-bg:#FAFBFC;
       }
       {% if config.extra.dark_mode %}
         @media (prefers-color-scheme: dark) {
@@ -31,6 +35,10 @@
             --heading-color: #dee2e6;
             --table-bg-even: #2d3237;
             --table-border-bottom: #697077;
+            --code-block-border-color: #00000000;
+            {# The code block colors come from the giallo code styles #}
+            --code-block-scrollbar-thumb: #BFBDB6;
+            --code-block-scrollbar-bg:#0D1017;
           }
         }
       {% endif %}

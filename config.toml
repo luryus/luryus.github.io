@@ -23,13 +23,11 @@ title = "Lauri Koskela"
 paths_keep_dates = true
 
 
-[markdown]
-highlight_code = true
-highlight_theme = "css"
-highlight_themes_css = [
-  { theme = "1337", filename = "syntax-theme-dark.css" },
-  { theme = "material-light", filename = "syntax-theme-light.css" },
-]
+[markdown.highlighting]
+error_on_missing_language = true
+style = "class"
+dark_theme = "ayu-dark"
+light_theme = "snazzy-light"
 
 [extra]
 # Put all your custom variables here
