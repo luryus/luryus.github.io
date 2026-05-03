@@ -61,7 +61,8 @@ These instructions assume that the baseline profile setup is done mostly followi
         buildTypes {
             // ...
 
-            // benchmarkRelease and nonMinifiedRelease are created by the Baseline Profile Gradle plugin
+            // benchmarkRelease and nonMinifiedRelease are created by
+            // the Baseline Profile Gradle plugin
             create("benchmarkRelease") {
                 buildConfigField("boolean", "MACROBENCHMARK", "true")
             }
