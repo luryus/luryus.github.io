@@ -14,12 +14,13 @@ But this got me thinking: would Envoy even do _anything_ regarding the `Forwarde
 
 <!-- more -->
 
-<!-- toc -->
 
 ## Summary
 Some web frameworks and servers, including Rails, Spring and Jetty, read values from the `Forwarded` request header in their default configuration. Most reverse proxies, CDNs and middleware servers do not touch the `Forwarded` header in requests. As a result, `Forwarded` headers set in untrusted requests will get passed on through proxies to the web applications, which may then consider the header trusted and use the values. This means that applications are often vulnerable to client IP and request host name spoofing via the `Forwarded` header.
 
 To remove the spoofing vector, developers and administrators should make sure their proxies and applications agree on the headers that are trusted, and configure proxies to drop any untrusted proxy headers in requests.
+
+<!-- toc -->
 
 ## Recap: the Forwarded header
 The `Forwarded` header is specified in [RFC 7239](https://datatracker.ietf.org/doc/html/rfc7239). It's meant to replace the non-standard, but _very_ widely supported `X-Forwarded-*` (`X-F` from now on) headers. Basically it just combines the different `X-F` headers into one standardised header. Reverse proxies, CDNs and other middleware layers set request information (client IP address, original host name, request protocol) in these headers, where the backend web service can read them from.
