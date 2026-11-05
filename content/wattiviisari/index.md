@@ -2,7 +2,7 @@
 +++
 
 
-{{ wattiviisari_hero() }}
+{{<wattiviisari_hero />}}
 
 [Suomeksi](@/wattiviisari/index.fi.md)
 

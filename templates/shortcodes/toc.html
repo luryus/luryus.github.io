@@ -1,0 +1,26 @@
+{% component with_toc(content, headings) %}
+{%- set toc_html %}
+<nav class="toc" aria-label="Table of contents">
+  <h4>Table of contents</h4>
+  <ul>
+    {%- for h in headings %}
+    {%- if h.level == 2 %}
+    <li>
+      <a href="#{{ h.id }}">{{ h.title }}</a>
+      {%- if h.children %}
+      <ul>
+        {%- for c in h.children %}
+        {%- if c.level == 3 %}
+        <li><a href="#{{ c.id }}">{{ c.title }}</a></li>
+        {%- endif %}
+        {%- endfor %}
+      </ul>
+      {%- endif %}
+    </li>
+    {%- endif %}
+    {%- endfor %}
+  </ul>
+</nav>
+{%- endset %}
+{{- content | replace(from="<!-- toc -->", to=toc_html) | safe }}
+{% endcomponent with_toc %}

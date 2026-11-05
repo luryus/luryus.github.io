@@ -87,32 +87,39 @@ table {
   font-size: 0.9em;
   font-family: sans-serif;
   min-width: 400px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 }
 
 thead tr {
-  background-color: var(--accent-color);
-  color: var(--accent-overlay-color);
+  color: var(--heading-color);
   text-align: left;
 }
 
 table th,
 table td {
     padding: 10px 12px;
+    text-align: initial;
+    border: 1px solid var(--table-border-bottom);
 }
 
-
-table tbody tr {
-    border-bottom: 1px solid var(--table-border-bottom);
-}
 
 table tbody tr:nth-of-type(even) {
     background-color: var(--table-bg-even);
 }
 
-table tbody tr:last-of-type {
-    border-bottom: 2px solid var(--accent-color);
+
+.table-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--code-block-scrollbar-thumb) var(--code-block-scrollbar-bg);
+
+  table {
+    min-width: 100%;
+  }
 }
+
 
 div.project-card {
   border: 1px solid var(--accent-color-light);
@@ -122,4 +129,41 @@ div.project-card {
   text-align: initial;
 }
 
+@media (min-width: 1400px) {
+  main {
+    max-width: 1000px;
+  }
+  header {
+    max-width: 1000px;
+  }
+}
+
 @import "./wattiviisari.scss";
+
+.toc {
+  margin: 2rem 0;
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  border-left: 3px solid var(--accent-color-light);
+  text-align: left;
+  font-size: 0.95rem;
+  line-height: 1.6;
+
+  h4 {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  > ul {
+    padding-left: 0;
+  }
+
+  > ul > li + li {
+    margin-top: 0.4rem;
+  }
+}

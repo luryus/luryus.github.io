@@ -20,11 +20,9 @@ Recently, I ran against a peculiar issue where Bitwarden started to consistently
 
 On a Sunday evening, I was just starting a gaming session with my friends. After starting Windows, Epic Games asked for my password, so I launched Wden, as usual, and tried to log in to my Bitwarden account. The login failed, because an access token request errored with a 503 status code. Huh, maybe Bitwarden is having some issues, I thought, and forgot about it. I didn't really need anything from Epic anyway.
 
-{% figure(
-    src="wden-503-error.png",
-    alt="Screenshot of Wden showing a 503 error from a request to /identity/connect/token") %}
+{% <figure src="wden-503-error.png" alt="Screenshot of Wden showing a 503 error from a request to /identity/connect/token"> %}
 The error that started this journey.
-{% end %}
+{% </figure> %}
 
 The next morning, at work, I tried to get a password from Wden on my work Windows laptop. Again, I couldn't log in, and Wden just showed the same 503 response. This time I actually needed the password, so I logged in to Bitwarden's web vault. It worked just fine, no errors whatsoever. OK, so maybe this is something client-specific and Wden is broken? Wouldn't be the first time Bitwarden adds some new requirement for the clients that then breaks Wden. That's what you get for using APIs not intended for general use, I suppose.
 
@@ -47,21 +45,17 @@ So, back to debugging. If the error arose from the HTTP server handler, there mu
 
 To see what kind of requests Wden made, I of course fired up [mitmproxy](https://mitmproxy.org/). Fortunately, [Reqwest](https://github.com/seanmonstar/reqwest), the HTTP client library Wden uses, supports easy proxy configuration via the HTTPS_PROXY environment variable. I tried to log in while mitmproxy was capturing all traffic from Wden, and HTTP requests and responses appeared in the web UI.
 
-{% figure(
-    src="mitmweb-b.png",
-    alt="Screenshot of mitmweb, showing a bunch of successful requests to Bitwarden") %}
+{% <figure src="mitmweb-b.png" alt="Screenshot of mitmweb, showing a bunch of successful requests to Bitwarden"> %}
 No errors to be seen here.
-{% end %}
+{% </figure> %}
 
 There was a noticeable lack of errors in the responses. Wden successfully fetched an access token and loaded my vault. The whole thing worked just like it should. What's going on? There was nothing unusual in the client request, as far as I could tell. Could mitmproxy somehow alter the outgoing requests in some way and avoid triggering the exceptions on the server side?
 
 I decided to test another proxy, and installed [Fiddler](https://www.telerik.com/fiddler/fiddler-classic). With that, the errors were back again - the access token requests returned errors with status code 503.
 
-{% figure(
-    src="fiddler.png",
-    alt="Screenshot of Fiddler, showing a capture of a 503 response from Bitwarden.") %}
+{% <figure src="fiddler.png" alt="Screenshot of Fiddler, showing a capture of a 503 response from Bitwarden."> %}
 Fiddler allowed me to see the full error response, with a good variety of font sizes in the UI.
-{% end %}
+{% </figure> %}
 
 At least I now had captures of both working and broken HTTP requests. *But there was absolutely no difference in them* - or at least the proxy tools did not show any. I did notice some differences in the TLS handshake parameters displayed by the tools, though. But that couldn't affect this...?
 
@@ -77,11 +71,9 @@ Maybe Fiddler would show some differences now between the broken requests from W
 
 Was this more of a Windows thing, and not a Wden thing after all? Fiddler is a Windows-only app, and it probably uses Windows networking APIs to make the outgoing HTTP requests. To test my hypothesis, I opened a PowerShell prompt, and called up everybody's least favourite [curl imposter](https://daniel.haxx.se/blog/2016/08/19/removing-the-powershell-curl-alias/), `Invoke-WebRequest`. After a quick check of its help output and cringing at the verbosity of parameter names in PowerShell, I crafted a token request, and sent it.
 
-{% figure(
-    src="curl-and-iwr.png",
-    alt="Curl and Invoke-WebRequest side-by-side, curl showing an invalid_request error, Invoke-WebRequest and internal server error.") %}
+{% <figure src="curl-and-iwr.png" alt="Curl and Invoke-WebRequest side-by-side, curl showing an invalid_request error, Invoke-WebRequest and internal server error."> %}
 Identical requests, different clients, different responses. Curl with the 400 on the left, Invoke-WebRequest with the 503 on the right.
-{% end %}
+{% </figure> %}
 
 *And it returned a 503 response!* Indeed, it seemed that making requests with Windows APIs cause the request processing to fail, whereas other network stacks work fine. But which part in Windows could possibly have any effect on the server side? The HTTP client in Wden is completely implemented in Rust; Windows should not have any part in that. I would imagine TCP and all the lower network layers are the same regardless of the client program, because those are implemented by the OS network stack. So the only culprit that made sense to me was TLS - even though I first thought that it could not be the reason for the errors.
 
@@ -99,19 +91,15 @@ When comparing the Wireshark captures, I immediately noticed that the TLS handsh
 
 I started to go through the handshake parameters, one by one, and tried to change related parameters in curl to see if they would cause the server to return errors. With the session reuse difference out of the way, there was actually only one difference remaining in the TLS Client Hello message: the `status_request` extension. This is how TLS clients request [OCSP stapling](https://en.wikipedia.org/wiki/OCSP_stapling). Curl specified this, Invoke-WebRequest did not.
 
-{% figure(
-    src="wireshark.png",
-    alt="Screenshot of two Wireshark windows showing TLS Client Hello message details.") %}
+{% <figure src="wireshark.png" alt="Screenshot of two Wireshark windows showing TLS Client Hello message details."> %}
 A broken (status code 503) request flow on the left, a working (400) request flow on the right. One is missing the `status_request` extension.
-{% end %}
+{% </figure> %}
 
 Curl has an option to control OCSP stapling, `--no-cert-status`, but that did not seem to do anything. And in fact, the man page even says that the option not implemented for Schannel. It took a bit of searching, but I finally found the Schannel-specific option `--ssl-no-revoke` from curl's man page. I added that to the curl command, and finally:
 
-{% figure(
-    src="curl-schannel-503.png",
-    alt="Screenshot of curl getting a 503 response.") %}
+{% <figure src="curl-schannel-503.png" alt="Screenshot of curl getting a 503 response."> %}
 With specific options, curl can also trigger the error.
-{% end %}
+{% </figure> %}
 
 The curl+Schannel combination now received a 503 error as well. Could the errors have something to do with OCSP? I thought not - again, I would think the entire TLS handshake, *including* OCSP stapling, is handled by Cloudflare, not the Bitwarden API server. I tried to search for mentions of OCSP in the Bitwarden source code anyway, but found nothing relevant.
 

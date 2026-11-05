@@ -1,7 +1,7 @@
 +++
 +++
 
-{{ wattiviisari_hero() }}
+{{<wattiviisari_hero />}}
 
 
 

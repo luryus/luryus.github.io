@@ -25,11 +25,13 @@ h6 {
 
 h2 {
   margin-top: 3em;
+  padding-bottom: 0.4em;
+  border-bottom: 1px solid var(--accent-color-light);
   text-align: initial;
   font-weight: 700;
   color: var(--heading-color);
   letter-spacing: 0.05em;
-  font-size: 1em;
+  font-size: 1.5em;
   text-transform: uppercase;
 }
 
@@ -151,7 +153,7 @@ a.profile-icon {
   }
 }
 
-nav {
+header nav {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -170,6 +172,9 @@ hr {
   margin: 2rem 0;
 }
 
+figure {
+  text-align: center;
+}
 
 figcaption {
   font-weight: 500;
@@ -209,4 +214,8 @@ figcaption {
     min-width: 3ch;
     text-align: right;
     opacity: 0.8;
+}
+
+.code-no-wrap code {
+  white-space: nowrap;
 }
