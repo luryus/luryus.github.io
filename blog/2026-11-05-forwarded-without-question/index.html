@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+
+    <style>
+      :root {
+        --accent-color: #1683ac;
+        --accent-color-light: #6c8f9d;
+        --accent-color-highlight: #146887;
+        --accent-overlay-color: #fff;
+        --body-bg: #f7fbff;
+        --body-color: #000;
+        --heading-color: #000;
+        --table-bg-even: #f3f3f3;
+        --table-border-bottom: #dddddd;
+        --code-block-border-color: var(--accent-color-light);
+        
+        --code-block-scrollbar-thumb: #565869;
+        --code-block-scrollbar-bg:#FAFBFC;
+      }
+      
+        @media (prefers-color-scheme: dark) {
+          :root {
+            --accent-color: #52b3d8;
+            --accent-color-highlight: #66c4e8;
+            --accent-overlay-color: #dee2e6;
+            --body-bg: #212529;
+            --body-color: #abb2bf;
+            --heading-color: #dee2e6;
+            --table-bg-even: #2d3237;
+            --table-border-bottom: #697077;
+            --code-block-border-color: #00000000;
+            
+            --code-block-scrollbar-thumb: #BFBDB6;
+            --code-block-scrollbar-bg:#0D1017;
+          }
+        }
+      
+    </style>
+
+    <meta name="theme-color" content="#1683ac" />
+
+
+    
+
+    
+  <meta property="og:type" content="article">
+
+
+    <meta name="twitter:card" content="summary">
+
+    
+
+    
+
+    
+      
+        <meta name="description" content="Some web frameworks and servers, including Rails, Spring and Jetty, read values from the Forwarded request header in their default configuration. Most reverse proxies, CDNs and middleware servers do not touch the Forwarded header in requests. As a result, Forwarded headers set in untrusted requests will get passed on through proxies to the web applications, which may then consider the header trusted and use the values. This means that applications are often vulnerable to client IP and request host name spoofing via the Forwarded header. To remove the spoofing vector, developers and administrators should make sure their proxies and applications agree on the headers that are trusted, and configure proxies to drop any untrusted proxy headers in requests." />
+        <meta property="og:description" content="Some web frameworks and servers, including Rails, Spring and Jetty, read values from the Forwarded request header in their default configuration. Most reverse proxies, CDNs and middleware servers do not touch the Forwarded header in requests. As a result, Forwarded headers set in untrusted requests will get passed on through proxies to the web applications, which may then consider the header trusted and use the values. This means that applications are often vulnerable to client IP and request host name spoofing via the Forwarded header. To remove the spoofing vector, developers and administrators should make sure their proxies and applications agree on the headers that are trusted, and configure proxies to drop any untrusted proxy headers in requests.">
+        <meta name="twitter:description" content="Some web frameworks and servers, including Rails, Spring and Jetty, read values from the Forwarded request header in their default configuration. Most reverse proxies, CDNs and middleware servers do not touch the Forwarded header in requests. As a result, Forwarded headers set in untrusted requests will get passed on through proxies to the web applications, which may then consider the header trusted and use the values. This means that applications are often vulnerable to client IP and request host name spoofing via the Forwarded header. To remove the spoofing vector, developers and administrators should make sure their proxies and applications agree on the headers that are trusted, and configure proxies to drop any untrusted proxy headers in requests.">
+      
+    
+
+    
+      <meta property="og:title" content="Forwarded Without Question: How Web Frameworks Overtrust the Forwarded Header">
+      <meta name="twitter:title" content="Forwarded Without Question: How Web Frameworks Overtrust the Forwarded Header">
+    
+
+    
+      <link rel="prerender" href="/about/" />
+    
+
+    
+    
+    <title>
+      
+        
+          Forwarded Without Question: How Web Frameworks Overtrust the Forwarded Header
+        
+      
+    </title>
+
+    
+    
+      <link rel="stylesheet" href="https://www.lkoskela.fi/main.css">
+    
+    
+  
+
+  
+
+  
+    <link rel="prerender"  href="https://www.lkoskela.fi/tags/forwarded/">
+  
+    <link rel="prerender"  href="https://www.lkoskela.fi/tags/security/">
+  
+    <link rel="prerender"  href="https://www.lkoskela.fi/tags/proxy/">
+  
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://google.com/article"
+      },
+      "headline": "Forwarded Without Question: How Web Frameworks Overtrust the Forwarded Header",
+      "image": [],
+      "datePublished": "2026-11-05",
+      "dateModified": "2026-11-05"
+    }
+  </script>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        
+
+        
+        {
+          
+          "@type": "ListItem",
+          "position": 1,
+          "name": "",
+          "item": "https://www.lkoskela.fi/"
+        },
+        
+        {
+          
+          "@type": "ListItem",
+          "position": 2,
+          "name": "",
+          "item": "https://www.lkoskela.fi/blog/"
+        },
+        
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Forwarded Without Question: How Web Frameworks Overtrust the Forwarded Header",
+          "item": "https://www.lkoskela.fi/blog/2026-11-05-forwarded-without-question/"
+        }
+      ]
+    }
+  </script>
+
+  </head>
+  <body>
+    
+      <header>
+        <a class="site-name" href="/">
+          Lauri Koskela
+        </a>
+        <nav>
+          <a class="nav-icon" href="https://www.lkoskela.fi/atom.xml">
+            <i class="ri-rss-fill"></i>
+          </a>
+          <a class="nav-icon" href="https://github.com/luryus">
+            <i class="ri-github-fill"></i>
+          </a>
+          
+            <a href="/about/">About</a>
+          
+        </nav>
+      </header>
+    
+    <main>
+    
+  <div class="post-title">
+    <h1>Forwarded Without Question: How Web Frameworks Overtrust the Forwarded Header</h1>
+    <small>
+      November 05, 2026
+      
+        - 
+        <span class="tags">
+          
+            <a href="https://www.lkoskela.fi/tags/forwarded/">forwarded</a>
+          
+            <a href="https://www.lkoskela.fi/tags/security/">security</a>
+          
+            <a href="https://www.lkoskela.fi/tags/proxy/">proxy</a>
+          
+        </span>
+      
+    </small>
+  </div>
+
+  <div>
+    <p>At work, I was recently testing and deploying a new HTTPS reverse proxy service. I ran into some weirdness in how <a rel="external" href="https://www.envoyproxy.io/">Envoy</a> handles the <code>X-Forwarded-For</code> headers when it's configured <em>not</em> to trust the incoming values. I ended up configuring Envoy to just drop all incoming <code>X-Forwarded-*</code> and <code>Forwarded</code> headers, just to be safe.</p>
+<p>But this got me thinking: would Envoy even do <em>anything</em> regarding the <code>Forwarded</code> header, if it's designed to mainly use the <code>X-Forwarded-*</code> family of headers? Are there web frameworks that would support <em>both</em> <code>X-Forwarded-*</code> and <code>Forwarded</code> and could this behaviour be abused?</p>
+<span id="continue-reading"></span><h2 id="summary">Summary</h2>
+<p>Some web frameworks and servers, including Rails, Spring and Jetty, read values from the <code>Forwarded</code> request header in their default configuration. Most reverse proxies, CDNs and middleware servers do not touch the <code>Forwarded</code> header in requests. As a result, <code>Forwarded</code> headers set in untrusted requests will get passed on through proxies to the web applications, which may then consider the header trusted and use the values. This means that applications are often vulnerable to client IP and request host name spoofing via the <code>Forwarded</code> header.</p>
+<p>To remove the spoofing vector, developers and administrators should make sure their proxies and applications agree on the headers that are trusted, and configure proxies to drop any untrusted proxy headers in requests.</p>
+
+<nav class="toc" aria-label="Table of contents">
+  <h4>Table of contents</h4>
+  <ul>
+    <li>
+      <a href="#summary">Summary</a>
+    </li>
+    <li>
+      <a href="#recap-the-forwarded-header">Recap: the Forwarded header</a>
+    </li>
+    <li>
+      <a href="#proxy-header-risks">Proxy header risks</a>
+    </li>
+    <li>
+      <a href="#web-framework-server-support">Web framework &amp; server support</a>
+      <ul>
+        <li><a href="#ruby-on-rails">Ruby on Rails</a></li>
+        <li><a href="#jetty">Jetty</a></li>
+        <li><a href="#spring-boot-reactor-netty">Spring Boot &amp; Reactor Netty</a></li>
+        <li><a href="#symfony">Symfony</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#reverse-proxies-cdns-and-caches">Reverse Proxies, CDNs, and Caches</a>
+      <ul>
+        <li><a href="#reverse-proxies">Reverse proxies</a></li>
+        <li><a href="#cloud-https-load-balancers">Cloud HTTPS Load Balancers</a></li>
+        <li><a href="#cdns">CDNs</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#impact-of-trusting-forwarded">Impact of trusting Forwarded</a>
+      <ul>
+        <li><a href="#client-ip-address-spoofing">Client IP address spoofing</a></li>
+        <li><a href="#hostname-spoofing-vulnerabilities">Hostname spoofing vulnerabilities</a></li>
+        <li><a href="#web-cache-poisoning">Web cache poisoning</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#how-to-secure-your-apps">How to secure your apps</a>
+      <ul>
+        <li><a href="#trusted-proxy-configs">Trusted proxy configs</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#conclusion">Conclusion</a>
+    </li>
+  </ul>
+</nav>
+<h2 id="recap-the-forwarded-header">Recap: the Forwarded header</h2>
+<p>The <code>Forwarded</code> header is specified in <a rel="external" href="https://datatracker.ietf.org/doc/html/rfc7239">RFC 7239</a>. It's meant to replace the non-standard, but <em>very</em> widely supported <code>X-Forwarded-*</code> (<code>X-F</code> from now on) headers. Basically it just combines the different <code>X-F</code> headers into one standardised header. Reverse proxies, CDNs and other middleware layers set request information (client IP address, original host name, request protocol) in these headers, where the backend web service can read them from.</p>
+<p>There are four different fields that the RFC specifies and that have various levels of support in frameworks:</p>
+<ul>
+<li><code>for=</code>: the client IP address and the addresses of proxy servers on the way. Replaces <code>X-Forwarded-For</code>.</li>
+<li><code>host=</code>: the original host name. Replaces <code>X-Forwarded-Host</code></li>
+<li><code>proto=</code>: the original protocol or scheme, generally either <code>https</code> or <code>http</code>. Replaces <code>X-Forwarded-Proto</code>.</li>
+<li><code>by=</code>: as specified in the RFC, "identifies the user-agent facing interface of the proxy". This is used a little inconsistently in web frameworks, but practically this is the IP address where the proxy received the request.</li>
+</ul>
+<p>Here's an example diagram showing how the header is designed to be used. A client makes a request to <code>example.com</code>, where a proxy server receives the request, sets the appropriate <code>Forwarded</code> header values and passes the request to the backend application. The application then parses values from the <code>Forwarded</code> header.</p>
+<figure>
+    <img src="normal_forwarded.svg" alt="Normal Forwarded header usage, with nothing nefarious. Proxy adds the Forwarded header." title="Normal Forwarded header usage.
+">
+    <figcaption>
+    Normal Forwarded header usage.
+    </figcaption>
+</figure>
+<p>The new header hasn't really been widely adopted yet. Only a few web frameworks seem to support it. This slow adoption is not at all surprising. <code>Forwarded</code> will need to be supported by <em>both</em> the web framework and the middleware servers for it to be usable. And as <code>Forwarded</code> has basically no real benefits over the <code>X-F</code> headers, there's just no real motivation to push <code>Forwarded</code> forward.</p>
+<h2 id="proxy-header-risks">Proxy header risks</h2>
+<p>Risks with <code>Forwarded</code> and its <code>X-F</code> counterparts are well known. If a web app and the proxy servers in front of it are configured insecurely, an attacker may be able to spoof the client IP address, the request host name and the request protocol. This then often leads to real vulnerabilities when the spoofed values get used inside the web app. Typical examples include bypassing IP address restrictions or rate limits, and password reset email deception via host name overrides.</p>
+<p>This diagram shows what spoofing could look like. The proxy only handles the <code>X-F</code> headers, but has no special handling for <code>Forwarded</code>. In that scenario, the backend app will receive both <code>X-F</code> and <code>Forwarded</code> headers with conflicting information. <strong>If the backend app prioritises <code>Forwarded</code> over <code>X-F</code>, spoofing is possible</strong>. For conciseness, only <code>X-Forwarded-For</code> and <code>Forwarded: for</code> are shown here, but the same problem applies to the <code>host</code> and <code>proto</code> fields, too. In the diagram, the backend app sets <code>remote_ip</code> to the spoofed value <code>127.0.0.1</code> from the <code>Forwarded</code> header, even though the proxy server reports the correct remote address <code>1.2.3.4</code> in <code>X-Forwarded-For</code>.</p>
+<figure>
+    <img src="evil.svg" alt="Forwarded header with spoofed contents prioritised over proxy-generated X-Forwarded-For." title="Forwarded header with spoofed contents prioritised over proxy-generated X-Forwarded-For.
+">
+    <figcaption>
+    Forwarded header with spoofed contents prioritised over proxy-generated X-Forwarded-For.
+    </figcaption>
+</figure>
+<p>Because of the known spoofing risks, many web frameworks have a concept of "trusted proxies": they only read and parse the <code>Forwarded</code> or <code>X-F</code> headers when the request comes in from an IP address that's on a configured list of trusted proxy servers. This pattern protects against situations where requests can be sent to the backend app directly, bypassing the proxy. Without the trusted proxy check in place, those requests could just pass anything in the <code>Forwarded</code> header and spoof values in the request. Unfortunately, as I will later show, this system is not effective in the situation depicted above where the proxy itself passes sensitive headers through to the backend.</p>
+<h2 id="web-framework-server-support">Web framework &amp; server support</h2>
+<p>I was interested to know how <code>Forwarded</code> is supported in various web frameworks and servers <strong>in their default-ish configuration</strong>. Individual applications may of course have all kinds of different custom header parsing middleware, but the framework-level support reveals some patterns that may be more broadly applicable.</p>
+<p>I read the framework docs and relevant source code, and built a local test app for the ones that seemed to have some support for <code>Forwarded</code>. The test apps are just echo servers that print the client IP address, hostname, and protocol values that are parsed by the frameworks. I can then make various requests to the apps and evaluate how they parse different header combinations.</p>
+<p>I evaluated the frameworks configured with the minimum number of changes required to enable some kind of forwarded header support. Because of the known risks with <code>X-F</code> and <code>Forwarded</code>, especially if the apps are exposed directly to the Internet, many frameworks require enabling forwarded header or "trusted proxy" support explicitly. Developers are supposed to do that only if they know the app is really hosted behind a proxy server that sets these headers. I followed the framework documentation and made the minimal changes to enable header handling.</p>
+<p>The list of frameworks checked here is somewhat arbitrary; basically I just checked frameworks I'm somewhat familiar with, and some widely used frameworks I know about. This list is by no means exhaustive. I investigated the latest versions of the frameworks at the time of testing (beginning of 2026). New versions have been released since, and some frameworks have issued patches to the vulnerable behaviour I found.</p>
+<p>The table below shows my findings. The following sections go more into detail about some of the more interesting subjects.</p>
+<div class="table-scroll code-no-wrap">
+<table><thead><tr><th>Framework</th><th><code>Forwarded</code> support</th><th><code>X-Forwarded-*</code> support</th><th>Prioritisation</th><th>Notes</th></tr></thead><tbody>
+<tr><td>Ruby on Rails 8.1.3</td><td><code>for</code> supported.</td><td>Yes</td><td><code>Forwarded: for</code> <a rel="external" href="https://github.com/rack/rack/blob/96beb2195901f91c89234d6bc7c464d32ea383c4/lib/rack/request.rb#L42">prioritised over</a> <code>X-Forwarded-For</code></td><td>Behaviour changed in Rails 8.1. A security fix shipped in 8.1.4.1.</td></tr>
+<tr><td>Jetty 12.1.7</td><td><code>for</code>, <code>host</code>, <code>proto</code>, <code>by</code> supported.</td><td>Yes</td><td><code>Forwarded</code> <a rel="external" href="https://github.com/jetty/jetty.project/blob/03995110b0a69ca5b03e3485c81b1c9b5b789e50/jetty-core/jetty-server/src/main/java/org/eclipse/jetty/server/ForwardedRequestCustomizer.java#L810">prioritised over</a> <code>X-F</code></td><td></td></tr>
+<tr><td>Spring Boot 4.0.5 + <code>FRAMEWORK</code>  strategy</td><td><code>for</code>, <code>host</code>, <code>proto</code>, <code>by</code> supported.</td><td>Yes</td><td><code>Forwarded</code> prioritised over <code>X-F</code>  (<a rel="external" href="https://github.com/spring-projects/spring-framework/blob/5e6e223686d13b90c9a770fd55c7b8535e3666f4/spring-web/src/main/java/org/springframework/web/util/ForwardedHeaderUtils.java#L60">1</a>, <a rel="external" href="https://github.com/spring-projects/spring-framework/blob/5e6e223686d13b90c9a770fd55c7b8535e3666f4/spring-web/src/main/java/org/springframework/web/util/ForwardedHeaderUtils.java#L141">2</a>)</td><td>Spring Boot 4.2 defaults to parsing only <code>X-Forwarded-*</code> headers.</td></tr>
+<tr><td>Spring Boot 4.0.5 + Jetty 12.1.7 + <code>NATIVE</code> strategy</td><td><code>for</code>, <code>host</code>, <code>proto</code>, <code>by</code> supported.</td><td>Yes</td><td><code>Forwarded</code> <a rel="external" href="https://github.com/jetty/jetty.project/blob/03995110b0a69ca5b03e3485c81b1c9b5b789e50/jetty-core/jetty-server/src/main/java/org/eclipse/jetty/server/ForwardedRequestCustomizer.java#L810">prioritised over</a> <code>X-F</code></td><td>Header handling is done inside Jetty. Spring Boot 4.2 configures Jetty to parse only <code>X-Forwarded-*</code> headers by default.</td></tr>
+<tr><td>Spring Boot 4.0.5 + Reactor Netty 1.3.4 + <code>NATIVE</code> strategy</td><td><code>for</code>, <code>host</code>, <code>proto</code> supported.</td><td>Yes</td><td><code>Forwarded</code> prioritised over <code>X-F</code> headers.</td><td>Header handling is done inside Reactor Netty. Spring Boot 4.2 defaults to parsing only <code>X-Forwarded-*</code> headers. Without Boot, Reactor Netty 1.4 requires an explicit choice of header family.</td></tr>
+<tr><td>Spring Boot 4.0.5 + Tomcat 11.0.20 + <code>NATIVE</code> strategy</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>Symfony 8.0.8</td><td><code>for</code>, <code>host</code>, <code>proto</code> supported</td><td>Yes</td><td>Support for each header must be explicitly enabled. Conflicting information in incoming headers causes errors.</td><td></td></tr>
+<tr><td>Gorilla ProxyHeaders handler 1.5.2</td><td><code>for</code> and <code>proto</code> supported</td><td>Yes</td><td><code>X-Forwarded-For</code>, <code>X-Real-IP</code>, <code>Forwarded</code> (<a rel="external" href="https://github.com/gorilla/handlers/blob/9c61bd81e701cf500437e1b516b675cdd3b73ca7/proxy_headers.go#L65">source</a>)</td><td><code>ProxyHeaders</code> handler. For hostnames, only <code>X-Forwarded-Host</code> is supported</td></tr>
+<tr><td>Gin 1.12.0</td><td>No</td><td>Only <code>X-Forwarded-For</code></td><td></td><td></td></tr>
+<tr><td>ASP.NET Core 10</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>Werkzeug 3.1.8</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>Django 6.0.4</td><td>No</td><td>Only <code>X-Forwarded-Host</code>, <code>-Port</code>, <code>-Proto</code></td><td></td><td></td></tr>
+<tr><td>Express 5.2.1</td><td>No</td><td>Yes</td><td></td><td><code>X-Forwarded-For</code> implementation in packages forwarded 0.2.0 and proxy-addr 2.0.7</td></tr>
+</tbody></table>
+</div>
+<p><code>X-Forwarded-*</code> headers are widely supported across frameworks. Conversely, <code>Forwarded</code> support is more spotty. The frameworks that support it often don't have safe handling for a situation where <em>both</em> <code>X-F</code> and <code>Forwarded</code> are present in a request. This behaviour might lead to vulnerabilities.</p>
+<h3 id="ruby-on-rails">Ruby on Rails</h3>
+<p>I happened to investigate this behaviour at an interesting time: the latest version of Rails at the time, 8.1, seemingly <a rel="external" href="https://github.com/rails/rails/commit/2d084af8444a7b6b868c7cbb256172007871e78d#diff-157bb01c07c2b70a00bd69af753e5047f66d1bc9c3768ca52c4e7cd3e717e1daR133">changed the Forwarded handling behaviour</a> somewhat accidentally by changing how the "forwarded for" information is read.</p>
+<p>The Rack libraries that Rails uses for HTTP request handling do read the <code>Forwarded</code> header, but before Rails 8.1, that information was not used anywhere. Since Rails 8.1, Rails uses Rack to determine the client IP in the <code>RemoteIp</code> middleware. Effectively, <strong><code>Forwarded: for</code> is now supported</strong>.</p>
+<p>If both <code>Client-IP</code> and <code>X-Forwarded-For</code> or <code>Forwarded: for</code> are specified in an incoming request, <a rel="external" href="https://github.com/rails/rails/blob/b4dd3fa04273b78ef09fa4f93f6f5dfa5357d970/actionpack/lib/action_dispatch/middleware/remote_ip.rb#L153"><code>RemoteIp</code> throws an <code>IpSpoofAttackError</code></a>. The point is to clearly detect and avoid situations where multiple headers are specified and a wrong IP could be accidentally chosen. Unfortunately, in Rails versions before 8.1.4.1, this check won't trigger if both <code>X-Forwarded-For</code> and <code>Forwarded: for</code> are specified, because the spoofing detection logic in those versions does not check all three headers.</p>
+<p>The conflicting header check is actually a pretty good way to fingerprint Rails backends. If a web app returns a 500 error response when both <code>Client-IP</code> and <code>Forwarded: for</code> (or <code>X-Forwarded-For</code>) are included in the request, there's a good chance the backend is built on Rails.</p>
+<p>Rails still does not really use <code>host</code> from the <code>Forwarded</code> header. So the impact of <code>Forwarded</code> getting passed to a Rails app is limited to source IP address spoofing.</p>
+<p>After I reported this issue to the Rails project, they issued <a rel="external" href="https://github.com/rails/rails/security/advisories/GHSA-2gff-2mmg-m73p">a fix</a> where the spoofing check was expanded to cover all three headers (<code>Client-IP</code>, <code>X-Forwarded-For</code>, <code>Forwarded</code>). The fix was released in <a rel="external" href="https://rubyonrails.org/2026/11/4/Rails-8.0.5.2-and-8.1.4.1-have-been-released">Rails 8.1.4.1</a>.</p>
+<h3 id="jetty">Jetty</h3>
+<p>Jetty has supported RFC 7239 <code>Forwarded</code> for a long time, at least <a rel="external" href="https://github.com/jetty/jetty.project/commit/b45af1a3c99fea756539f81f085a33667e7f64c1">since 2016</a>. <code>Forwarded</code> support has always been enabled by default, along with <code>X-F</code>, and the priority order between them got formalised <a rel="external" href="https://github.com/jetty/jetty.project/issues/5247">in 2020</a>. <code>Forwarded</code> is explicitly prioritised over <code>X-F</code> when both are present in an incoming request. This means that if proxy servers don't drop incoming <code>Forwarded</code> headers, the request IP address, host name and scheme <strong>can be spoofed</strong>.</p>
+<p>Jetty servers vulnerable to this kind of spoofing are easy to look for: specifying an invalid port number in the <code>host</code> field will cause an error (for example, <code>Forwarded: host=example.com:invalidport</code>). Parsing the port number throws an exception and produces a <code>400 Bad Request</code> response, and the response body often includes a stack trace or a Jetty-specific error message.</p>
+<p>After I reported this issue to the Jetty project, they made <a rel="external" href="https://github.com/jetty/jetty.project/pull/15462">some changes</a> to make configuring the <code>Forwarded</code> handling behaviour easier, but did not change the default behaviour. That is somewhat fair, as the behaviour has been clearly documented, and the problem can be seen as a proxy configuration issue. However, as we'll see later, the defaults of most proxies really don't work well with the defaults of Jetty, and therefore the defaults still leave many servers open to spoofing.</p>
+<p>If you are running Jetty servers, make sure to verify that your proxy only passes through the appropriate headers, and preferably also configure Jetty to accept only the headers your proxy actually handles.</p>
+<h3 id="spring-boot-reactor-netty">Spring Boot &amp; Reactor Netty</h3>
+<p>With these Java-based stacks, the Forwarded header handling behaviour <a rel="external" href="https://docs.spring.io/spring-boot/how-to/webserver.html#howto.webserver.use-behind-a-proxy-server">depends on configuration</a> and which application server is used. Spring Boot can leverage the server's implementation (the <code>NATIVE</code> option, the recommended default) or use Spring's headers support (<code>server.forward-headers-strategy=FRAMEWORK</code>).</p>
+<p>The interesting ones here are Spring's Jetty support, Reactor Netty, and Spring Framework's own implementation: <strong>in Spring Boot versions before 4.2, all three accept both <code>Forwarded</code> and <code>X-F</code> headers by default when forwarded header handling is enabled</strong>. The three most important <code>Forwarded</code> fields (<code>for</code>, <code>host</code> and <code>proto</code>) are supported, and they are prioritised over the corresponding <code>X-F</code> headers. This means that if proxy servers don't drop incoming <code>Forwarded</code> headers, the request IP address, host name and scheme <strong>can be spoofed</strong>.</p>
+<p>Tomcat does not display the same vulnerable behaviour. It only supports one header kind at a time, <code>X-F</code> by default (<a rel="external" href="https://tomcat.apache.org/tomcat-11.0-doc/config/valve.html#Remote_IP_Valve">docs</a>). In a typical setup, Tomcat applications would be configured to read only the headers set by the proxies in front of them.</p>
+<p>The identification method I described for Jetty above works for Spring servers, too. Of course, many of them run Jetty behind the scenes, so that's natural, but Reactor Netty's and Spring's own header parsing also return <code>400 Bad Request</code> for invalid port numbers, albeit without a stack trace. Other frameworks (see Symfony below) have this same behaviour, but the actual framework can often be deduced from the response contents.</p>
+<p>After I reported this issue to the projects, Spring and Reactor Netty changed how the Forwarded header handling is configured in the frameworks (<a rel="external" href="https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-7.1-Release-Notes">Spring 7.1</a>, <a rel="external" href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.2.0-M1-Release-Notes#forward-http-headers-behavior-change">Spring Boot 4.2</a>, <a rel="external" href="https://github.com/reactor/reactor-netty/pull/4312">Reactor Netty</a>). Spring Boot 4.2 now defaults to parsing only <code>X-Forwarded-*</code> headers, protecting applications from this spoofing behaviour by default. Applications using Spring Framework 7.1 or Reactor Netty 1.4 directly, without Boot, must explicitly choose which header family to parse. Older release branches got the same new configuration capabilities, but as a non-breaking change, which means that users can choose to opt into selecting which headers to use. <a rel="external" href="https://docs.spring.io/spring-framework/reference/7.1-SNAPSHOT/web/webmvc/filters.html#filters-forwarded-headers">Documentation was also updated</a> to try to make users aware of the potential security risks.</p>
+<h3 id="symfony">Symfony</h3>
+<p>Symfony is notable because it implements <code>Forwarded</code> support a bit more safely. First of all, <code>Forwarded</code> needs to be <a rel="external" href="https://symfony.com/doc/current/deployment/proxies.html#solution-settrustedproxies">explicitly enabled in configuration</a> for Symfony to read it. And if both <code>X-F</code> and <code>Forwarded</code> are enabled, but their values in an incoming request do not match, Symfony returns a 400 Bad Request response. This makes it impossible to spoof IP addresses in the typical situation where a reverse proxy sets <code>X-Forwarded-For</code> and lets <code>Forwarded</code> through unchanged.</p>
+<p>If <code>Forwarded</code> support <em>is</em> enabled, it is still often possible to spoof the request host name though. This is because there's often no need for proxies to add <code>X-Forwarded-Host</code> to backend requests; they can just keep the original request hostname in the <code>Host</code> header. Client requests that specify <code>Forwarded</code> with <em>only</em> the host field set will not cause any conflicts: <code>X-Forwarded-Host</code> is not set at all in the backend request, and likewise the <code>Forwarded</code> header doesn't contain <code>for</code> or <code>proto</code> that could conflict with <code>X-Forwarded-For</code> or <code>X-Forwarded-Proto</code>. Symfony will then happily read the host name from the client-specified header.</p>
+<p>The same detection trick I mentioned for the Java frameworks works on Symfony, too. Sending <code>Forwarded: host=example.com:invalidport</code> will make Symfony return a 400 Bad Request response immediately.</p>
+<h2 id="reverse-proxies-cdns-and-caches">Reverse Proxies, CDNs, and Caches</h2>
+<p>Reverse proxies and other middleware services are the other layer that reads and sets <code>Forwarded</code> and <code>X-F</code> headers on the path to the upstream service. It is therefore important to investigate their behaviour, too.</p>
+<p>I focused on reverse proxies, mainly because that's just what I'm more familiar with. I also did a lightweight documentation review of some CDNs and public cloud HTTPS load balancers to see how they handle the <code>Forwarded</code> header.</p>
+<h3 id="reverse-proxies">Reverse proxies</h3>
+<p>The overarching result is that <strong><code>Forwarded</code> is almost entirely unsupported on proxy servers</strong>. As with the web frameworks, <code>X-F</code> headers are the universal way that proxies pass information about forwarded requests to the backend. Most proxies do not handle <code>Forwarded</code> specially, and instead pass it along just like any other header.</p>
+<p>Like the web frameworks earlier, many reverse proxies are extremely configurable. I evaluated the proxies without plugins or other more complicated configurations. For some (like Envoy and Nginx), instead of just checking the "raw" server I opted to test with opinionated services, such as Kubernetes Ingress controllers, that configure these proxies in a suitable way.</p>
+<p>Here's what the values in the table mean:</p>
+<ul>
+<li><strong>handled:</strong> the proxy server overwrites the header before sending the request to the backend</li>
+<li><strong>passed through:</strong> the proxy server does not have any handling for the header, and passes it through unaltered to the backend</li>
+</ul>
+<div class="table-scroll">
+<table><thead><tr><th>Proxy</th><th>Forwarded</th><th>X-Forwarded-For</th><th>X-Forwarded-Host</th></tr></thead><tbody>
+<tr><td>HAProxy 3.2.5</td><td>Handled, when configured</td><td>Handled</td><td>Passed through</td></tr>
+<tr><td>Envoy (Envoy Gateway 1.7.0)</td><td>Passed through</td><td>Handled</td><td>Passed through</td></tr>
+<tr><td>Nginx (ingress-nginx 1.14.2)</td><td>Passed through</td><td>Handled</td><td>Handled</td></tr>
+<tr><td>Traefik 3.6.7</td><td>Passed through</td><td>Handled</td><td>Handled</td></tr>
+<tr><td>Apache 2.4.65</td><td>Passed through</td><td>Handled</td><td>Handled</td></tr>
+<tr><td>Caddy 2.11.1</td><td>Passed through</td><td>Handled</td><td>Handled</td></tr>
+<tr><td>Kong (Kong Ingress Controller 3.5.4)</td><td>Passed through</td><td>Handled</td><td>Handled</td></tr>
+</tbody></table>
+</div>
+<p>Of the proxies I tested, HAProxy is the only one that has some kind of support for <code>Forwarded</code>, but it still needs to be explicitly enabled. As far as I can tell, the others don't support it at all without extra plugins.</p>
+<h3 id="cloud-https-load-balancers">Cloud HTTPS Load Balancers</h3>
+<p>The same story continues with Cloud Load Balancers. <strong>I did not test them, so this analysis is based only on their documentation</strong>. AWS Application Load Balancer, Google Cloud Application Load Balancer, and Azure Application Gateway all use <code>X-Forwarded-For</code> for passing the client IP address. The docs don't mention <code>Forwarded</code> at all, so I would assume they pass <code>Forwarded</code> through.</p>
+<p>AWS API Gateway is a surprising exception here. It actually <a rel="external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-known-issues.html#api-gateway-known-issues-http-apis">transforms any <code>X-F</code> headers to <code>Forwarded</code></a>. This was the only cloud service I found that supports <code>Forwarded</code> in any capacity.</p>
+<h3 id="cdns">CDNs</h3>
+<p>No surprises here: <code>Forwarded</code> support is pretty much nowhere to be found. Naturally, CDNs might allow altering headers via custom rules, but the default configuration is what I'm interested in here.</p>
+<p>I did not test the services; the information here is based purely on documentation.</p>
+<ul>
+<li><strong>Cloudflare:</strong> Does not strip or handle <code>Forwarded</code> headers.
+<ul>
+<li><a rel="external" href="https://developers.cloudflare.com/cache/how-to/cache-keys/"><code>Forwarded</code> <em>is</em> included in the default cache key</a> though, along with <code>X-F</code> headers. This prevents some web cache poisoning vulnerabilities (more about these below).</li>
+</ul>
+</li>
+<li><strong>Amazon CloudFront:</strong> Does not strip or handle <code>Forwarded</code> headers. Adds the client IP to <code>X-Forwarded-For</code> and sends that to the backend.</li>
+<li><strong>Akamai</strong>: No mention of <code>Forwarded</code> in docs. I assume it's just passed through as any other header.</li>
+</ul>
+<h2 id="impact-of-trusting-forwarded">Impact of trusting <code>Forwarded</code></h2>
+<p>It looks like the situation is this: some of the most popular web frameworks trust <em>and prioritise</em> values from the <code>Forwarded</code> header, even though support for it in proxy servers is mostly nonexistent. It's therefore possible, and even common, to be able to <strong>spoof the client IP address (<code>for=</code>), request host name (<code>host=</code>) and protocol (<code>proto=</code>)</strong> in requests.</p>
+<p>To test my hypothesis, I went through hundreds of bug bounty programs, making requests to in-scope servers with various <code>Forwarded</code> values. I focused on using the web framework detection techniques I mentioned earlier. During this research, I did not dive too deep into the programs, but instead focused on lightweight recon.</p>
+<p>Based on the error responses and behaviour I saw, it's really common for servers to read and use values from the <code>Forwarded</code> header in the request. Fortunately, this alone is rarely a vulnerability. Usually, some other behaviour like cache poisoning or IP address based access control needs to be combined with the <code>Forwarded</code> header tricks to achieve some kind of security impact. I'll go through some of the possible attack vectors next.</p>
+<h3 id="client-ip-address-spoofing">Client IP address spoofing</h3>
+<p>This is one of the potential vulnerabilities that could be caused <em>only</em> by the server trusting <code>Forwarded: for</code> or similar headers. If the web application uses the client IP address in some business logic or access control system, being able to spoof the IP naturally allows doing all kinds of things. This includes:</p>
+<ul>
+<li>Bypassing IP address based access controls. For instance, an administration page on a website could check that the request comes in from the office network of the company, and deny requests otherwise.</li>
+<li>Bypassing IP address based rate limits</li>
+<li>Spoofing IP addresses in logs</li>
+</ul>
+<p>While testing bug bounty program targets, I was able to find one vulnerability where my spoofed IP address was stored in an access log visible to administrators. The report ended up getting closed as a duplicate. These bugs may be rare to find in bug bounty programs because the problem is well known and often already fixed. Apps also rarely expose the client IP addresses, making spoofing difficult to observe. Still, this might be a useful thing to test with, especially when targeting a single bug bounty program instead of broad lightweight testing.</p>
+<h3 id="hostname-spoofing-vulnerabilities">Hostname spoofing vulnerabilities</h3>
+<p>Web apps don't generally need to read the host name in the incoming request. One of the well-known situations where this is done is generating password reset links or other absolute URLs. If the host name can be spoofed, the web app could be tricked into generating password reset links with an attacker-controlled host name. If a user clicks this link in a password reset email they receive, the attacker will get the user's password reset token. The attacker can then proceed to reset the user's password and take over the account.</p>
+<h3 id="web-cache-poisoning">Web cache poisoning</h3>
+<p>Both <code>Forwarded: host</code> and <code>Forwarded: proto</code> can lead to web cache poisoning vulnerabilities in certain setups. Naturally, the web app must be behind a cache that stores some interesting responses and does <em>not</em> include the <code>Forwarded</code> header in the cache key. <a rel="external" href="https://developers.cloudflare.com/cache/how-to/cache-keys/">Cloudflare's default cache key <em>does</em> include <code>Forwarded</code></a>, and that directly prevents many cache poisoning exploits.</p>
+<p>These cache poisoning vulnerabilities have a wide range of possible effects. One simple case is using <code>Forwarded: host</code> to override host names in absolute links. If the HTML with these links gets cached and served to users, they will get forwarded to attacker-controlled websites when clicking them. I found one of these cases in a bug bounty program, but unfortunately it was a duplicate.</p>
+<p>Another common behaviour I found is sites responding with redirects when the <code>Forwarded</code> header includes <code>proto=http</code>. This happens when the web app or a proxy server on the way aims to force HTTPS connections by redirecting the user to the same page but using HTTPS. Often, the redirect targets are built with the host name read from <code>Forwarded</code> too, causing the redirect to target the attacker's website. This behaviour is not that useful by itself, but can be leveraged if the redirect gets cached. Then it could be possible, for instance, to poison the cache for a JavaScript file to redirect to an attacker-controlled domain which serves malicious JS, leading to XSS.</p>
+<p>One fun special case is when the HTTP-to-HTTPS redirect does <em>not</em> change the host name, but still gets cached. This may lead to an infinite redirect loop, as the redirect target is always just the same URL. This is a denial-of-service situation, and those are unfortunately mostly out of scope in bug bounty programs. I did find at least a couple of these in the wild.</p>
+<h2 id="how-to-secure-your-apps">How to secure your apps</h2>
+<p>The short answer: <strong>just disable support for the <code>Forwarded</code> header in your web app</strong>. Proxy servers in front of your app most likely don't support the header anyway. Parsing and trusting incoming <code>Forwarded</code> headers is probably going to be just a vulnerability with no benefits.</p>
+<p>The <em>proper</em> solution is, of course, to go through all the web apps and proxy servers in front of them, and verify that they all agree on the headers used. Currently, <code>X-F</code> headers are still the best option: they are most widely supported across proxies, web frameworks, CDNs, and other services. All the other headers, like <code>Forwarded</code>, <code>X-Real-IP</code>, etc. should then be disabled across the stack:</p>
+<ul>
+<li>Web apps should be configured not to read or trust headers that the proxies do not handle. I.e. if frontend proxies do not set or handle the <code>Forwarded</code> header, the backend web app should not read <em>anything</em> from it.</li>
+<li>Proxies should be configured to drop or overwrite the various proxy headers in requests, so that clients can never supply them. I.e. if <code>X-Forwarded-*</code> headers are used across the stack, the first reverse proxy should already drop incoming <code>Forwarded</code> headers in client requests.</li>
+</ul>
+<p>Many frameworks allow configuring a list of <strong>allowed host names</strong>. That's an effective mitigation for host name spoofing attacks: even if a spoofed host name header got through, the app would reject the request if the name wasn't found in the list of allowed names. At least <a rel="external" href="https://symfony.com/doc/current/reference/configuration/framework.html#trusted-hosts">Symfony</a>, <a rel="external" href="https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.forwardedheadersoptions.allowedhosts?view=aspnetcore-10.0#microsoft-aspnetcore-builder-forwardedheadersoptions-allowedhosts">ASP.NET</a> and <a rel="external" href="https://docs.djangoproject.com/en/6.0/ref/settings/#allowed-hosts">Django</a> have these kinds of settings available.</p>
+<h3 id="trusted-proxy-configs">Trusted proxy configs</h3>
+<p>It's worth mentioning that the various "trusted proxy" options that many web frameworks expose do <em>not</em> really guard against these problems. Many frameworks will only parse and trust incoming <code>X-F</code> and <code>Forwarded</code> headers if the request comes via a "trusted proxy". The idea of course is that those proxies will set the headers correctly and therefore they can be trusted.</p>
+<p>The problem is that <strong>if a trusted proxy passes some request headers through unaltered, those headers will appear trusted in the backend</strong>. The proxy effectively acts as a kind of confused deputy in the situation. For a proxy to be truly trusted, it should actually remove or rewrite <em>all</em> possible headers that the "trusted proxy" setting controls in the backend. <a rel="external" href="https://expressjs.com/en/guide/behind-proxies.html">Express docs</a> explain this well:</p>
+<blockquote>
+<p>When setting to <code>true</code>, it is important to ensure that the last reverse proxy trusted is removing/overwriting all of the following HTTP headers: <code>X-Forwarded-For</code>, <code>X-Forwarded-Host</code>, and <code>X-Forwarded-Proto</code>, otherwise it may be possible for the client to provide any value.</p>
+</blockquote>
+<p>Unfortunately, as seen above, almost none of the commonly used proxy servers actually drop <code>Forwarded</code> by default. If the backend application or framework actually trusts <code>Forwarded</code>, the trusted proxy setting is pretty much meaningless as the proxy will happily forward spoofed headers to the backend.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>It looks like <code>Forwarded</code> adoption is in a difficult state right now: the support for it in proxies is almost nonexistent, and that opens up spoofing vulnerabilities in web apps. At the same time, the web framework support is not too broad either, and therefore there's no notable interest to implement <code>Forwarded</code> in the proxies. <code>X-Forwarded-*</code> works just fine, so why bother?</p>
+<p>I really don't know how widespread the issue is. Odds are that many servers are vulnerable in the wild, because the default configurations of many popular frameworks are susceptible to spoofing. Lightly scanning bug bounty programs does not give a good picture of this: I'm sure both <code>X-F</code> and <code>Forwarded</code> are very common things to test with when trying to find vulnerabilities, and most of the easy-to-find bugs have already been found.</p>
+<p>Furthermore, it can be very difficult to even know if an app is vulnerable or not. For instance, spoofing the client IP address may work, but it could only be visible if the app has some kind of functionality that relies on the IP address. If there are no such features, the spoofing may still be visible in server access logs, for example, but an outside bug hunter has no visibility into that.</p>
+<p>In my opinion, web frameworks and libraries should never enable support for many different proxy headers by default. Developers or admins should be forced to make the decision based on the actual proxy setup in front of the app. Many servers already require configuring the "trusted proxies" manually, so why not include the list of trusted headers in the configuration, too?</p>
+
+
+  </div>
+
+  <hr class="footer-rule" />
+
+  
+    <div class="footer-about">
+      <p>Lauri Koskela // <a rel="external" href="https://github.com/luryus">github.com/luryus</a></p>
+
+    </div>
+  
+
+  <div class="related-container">
+
+    
+
+    
+
+  </div>
+
+
+    </main>
+    <footer class="footer-page">
+    
+      
+    
+    </footer>
+  </body>
+</html>
