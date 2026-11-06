@@ -57,7 +57,9 @@
       </script>
     {% endif %}
 
-    <meta property="og:type" content="website">
+    {% block og_type %}
+      <meta property="og:type" content="website">
+    {% endblock og_type %}
 
     <meta name="twitter:card" content="summary">
 
@@ -81,16 +83,20 @@
     {% block description %}
       {% if page?.description %}
         <meta name="description" content="{{ page.description }}" />
+        <meta property="og:description" content="{{ page.description }}">
         <meta name="twitter:description" content="{{ page.description }}">
       {% else %}
         <meta name="description" content="{{ config.description }}" />
+        <meta property="og:description" content="{{ config.description }}">
         <meta name="twitter:description" content="{{ config.description}}">
       {% endif %}
     {% endblock description %}
 
     {% if page?.title %}
+      <meta property="og:title" content="{{ page.title }}">
       <meta name="twitter:title" content="{{ page.title }}">
     {% else %}
+      <meta property="og:title" content="{{ config.title }}">
       <meta name="twitter:title" content="{{ config.title }}">
     {% endif %}
 

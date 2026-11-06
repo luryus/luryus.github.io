@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block og_type %}
+  <meta property="og:type" content="article">
+{% endblock og_type %}
+
 {% block posthead %}
   {% if page.earlier %}
     <link rel="prerender" href="{{ page.earlier.permalink }}">
