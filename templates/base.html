@@ -61,6 +61,12 @@
       <meta property="og:type" content="website">
     {% endblock og_type %}
 
+    {% if current_url %}
+      <link rel="canonical" href="{{ current_url }}">
+      <meta property="og:url" content="{{ current_url }}">
+    {% endif %}
+    <meta property="og:site_name" content="{{ config.title }}">
+
     <meta name="twitter:card" content="summary">
 
     {% if config.twitter %}

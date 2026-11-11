@@ -20,28 +20,31 @@
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "NewsArticle",
+      "@type": "BlogPosting",
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://google.com/article"
+        "@id": {{ page.permalink | json_encode | safe }}
       },
-      "headline": "{{ page.title }}",
-      "image": [],
-      "datePublished": "{{ page.date }}",
-      "dateModified": "{{ page.updated or page.date }}"{% if config.extra.author %},
-      "author": {
-        "@type": "Person",
-        "name": "{{ config.extra.author }}"
-      },
-       "publisher": {
-        "@type": "Organization",
-        "name": "{{ config.extra.author }}"{% if config.extra.icon %},
-        "logo": {
-          "@type": "ImageObject",
-          "url": "{{ get_url(path=config.extra.icon) | safe }}"
+      "headline": {{ page.title | json_encode | safe }},
+      {% if page.description %}
+        "description": {{ page.description | json_encode | safe }},
+      {% endif %}
+      "datePublished": {{ page.date | json_encode | safe }},
+      "dateModified": {% if page.updated %}{{ page.updated | json_encode | safe }}{% else %}{{ page.date | json_encode | safe }}{% endif %}
+      {% if page.authors %},
+        "author": [
+          {% for author in page.authors %}
+            {
+              "@type": "Person",
+              "name": {{ author | json_encode | safe }}
+            }{% if not loop.last %},{% endif %}
+          {% endfor %}
+        ]
+      {% elif config.extra.author %},
+        "author": {
+          "@type": "Person",
+          "name": {{ config.extra.author | json_encode | safe }}
         }
-        {% endif %}
-      }
       {% endif %}
     }
   </script>
@@ -58,15 +61,15 @@
           {% set section = get_section(path=section_path) %}
           "@type": "ListItem",
           "position": {{ loop.index }},
-          "name": "{{ section.title }}",
-          "item": "{{ section.permalink | safe }}"
+          "name": {% if section.title %}{{ section.title | json_encode | safe }}{% elif loop.first %}"Home"{% else %}{{ section.path | json_encode | safe }}{% endif %},
+          "item": {{ section.permalink | json_encode | safe }}
         },
         {% endfor %}
         {
           "@type": "ListItem",
           "position": {{ len + 1 }},
-          "name": "{{ page.title }}",
-          "item": "{{ page.permalink | safe }}"
+          "name": {{ page.title | json_encode | safe }},
+          "item": {{ page.permalink | json_encode | safe }}
         }
       ]
     }

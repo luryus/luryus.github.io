@@ -2,7 +2,7 @@
 date = 2026-11-05
 updated = 2026-11-11
 title = "Forwarded Without Question: How Web Frameworks Overtrust the Forwarded Header"
-description = "Some web frameworks and servers, including Rails, Spring and Jetty, read values from the Forwarded request header in their default configuration. Most reverse proxies, CDNs and middleware servers do not touch the Forwarded header in requests. As a result, Forwarded headers set in untrusted requests will get passed on through proxies to the web applications, which may then consider the header trusted and use the values. This means that applications are often vulnerable to client IP and request host name spoofing via the Forwarded header. To remove the spoofing vector, developers and administrators should make sure their proxies and applications agree on the headers that are trusted, and configure proxies to drop any untrusted proxy headers in requests."
+description = "How untrusted Forwarded headers enable client IP and hostname spoofing in Rails, Spring, Jetty and other frameworks, and how to secure reverse proxy configurations."
 authors = ["Lauri Koskela"]
 
 [taxonomies]
