@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block head %}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Wattiviisari",
+      "url": {{ page.permalink | json_encode() | safe }},
+      "description": {{ page.description | json_encode() | safe }},
+      "inLanguage": {{ page.lang | json_encode() | safe }},
+      "operatingSystem": "Wear OS",
+      "applicationCategory": "UtilitiesApplication",
+      "installUrl": "https://play.google.com/store/apps/details?id=com.lkoskela.wattiviisari",
+      "author": {
+        "@type": "Person",
+        "name": "Lauri Koskela",
+        "url": {{ get_url(path="about/") | json_encode() | safe }}
+      }
+    }
+  </script>
+{% endblock head %}
+
+{% block content %}
+  <div class="wattiviisari">
+    {{ page.content | safe }}
+  </div>
+{% endblock content %}

@@ -22,7 +22,9 @@ A password manager TUI for Bitwarden-compatible servers. A lot more lightweight 
 {% <project_card> %}
 #### [Wattiviisari](@/wattiviisari/index.md)
 
-A Wear OS (Android Wear) app for viewing Finnish electricity spot prices.
+A Wear OS app for viewing Finnish electricity spot prices.
+
+[Suomeksi: Wattiviisari – pörssisähkö älykelloon](@/wattiviisari/index.fi.md)
 {% </project_card> %}
 
 
