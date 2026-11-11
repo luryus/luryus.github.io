@@ -1,6 +1,6 @@
 +++
 date = 2026-11-05
-updated = 2026-11-05
+updated = 2026-11-11
 title = "Forwarded Without Question: How Web Frameworks Overtrust the Forwarded Header"
 description = "Some web frameworks and servers, including Rails, Spring and Jetty, read values from the Forwarded request header in their default configuration. Most reverse proxies, CDNs and middleware servers do not touch the Forwarded header in requests. As a result, Forwarded headers set in untrusted requests will get passed on through proxies to the web applications, which may then consider the header trusted and use the values. This means that applications are often vulnerable to client IP and request host name spoofing via the Forwarded header. To remove the spoofing vector, developers and administrators should make sure their proxies and applications agree on the headers that are trusted, and configure proxies to drop any untrusted proxy headers in requests."
 authors = ["Lauri Koskela"]
@@ -9,19 +9,21 @@ authors = ["Lauri Koskela"]
 tags = [ "forwarded", "security", "proxy" ]
 +++
 
-At work, I was recently testing and deploying a new HTTPS reverse proxy service. I ran into some weirdness in how [Envoy](https://www.envoyproxy.io/) handles the `X-Forwarded-For` headers when it's configured _not_ to trust the incoming values. I ended up configuring Envoy to just drop all incoming `X-Forwarded-*` and `Forwarded` headers, just to be safe.
-
-But this got me thinking: would Envoy even do _anything_ regarding the `Forwarded` header, if it's designed to mainly use the `X-Forwarded-*` family of headers? Are there web frameworks that would support _both_ `X-Forwarded-*` and `Forwarded` and could this behaviour be abused?
-
-<!-- more -->
-
-
-## Summary
 Some web frameworks and servers, including Rails, Spring and Jetty, read values from the `Forwarded` request header in their default configuration. Most reverse proxies, CDNs and middleware servers do not touch the `Forwarded` header in requests. As a result, `Forwarded` headers set in untrusted requests will get passed on through proxies to the web applications, which may then consider the header trusted and use the values. This means that applications are often vulnerable to client IP and request host name spoofing via the `Forwarded` header.
+
+My reports led to a Rails security fix ([CVE-2026-126083](https://github.com/rails/rails/security/advisories/GHSA-2gff-2mmg-m73p)) and changes to forwarded header handling in Spring and Reactor Netty.
 
 To remove the spoofing vector, developers and administrators should make sure their proxies and applications agree on the headers that are trusted, and configure proxies to drop any untrusted proxy headers in requests.
 
+<!-- more -->
+
 <!-- toc -->
+
+## Preface
+
+At work, I was recently testing and deploying a new HTTPS reverse proxy service. I ran into some weirdness in how [Envoy](https://www.envoyproxy.io/) handles the `X-Forwarded-For` headers when it's configured _not_ to trust the incoming values. I ended up configuring Envoy to just drop all incoming `X-Forwarded-*` and `Forwarded` headers, just to be safe.
+
+But this got me thinking: would Envoy even do _anything_ regarding the `Forwarded` header, if it's designed to mainly use the `X-Forwarded-*` family of headers? Are there web frameworks that would support _both_ `X-Forwarded-*` and `Forwarded` and could this behaviour be abused?
 
 ## Recap: the Forwarded header
 The `Forwarded` header is specified in [RFC 7239](https://datatracker.ietf.org/doc/html/rfc7239). It's meant to replace the non-standard, but _very_ widely supported `X-Forwarded-*` (`X-F` from now on) headers. Basically it just combines the different `X-F` headers into one standardised header. Reverse proxies, CDNs and other middleware layers set request information (client IP address, original host name, request protocol) in these headers, where the backend web service can read them from.
@@ -96,7 +98,7 @@ The conflicting header check is actually a pretty good way to fingerprint Rails 
 
 Rails still does not really use `host` from the `Forwarded` header. So the impact of `Forwarded` getting passed to a Rails app is limited to source IP address spoofing.
 
-After I reported this issue to the Rails project, they issued [a fix](https://github.com/rails/rails/security/advisories/GHSA-2gff-2mmg-m73p) where the spoofing check was expanded to cover all three headers (`Client-IP`, `X-Forwarded-For`, `Forwarded`). The fix was released in [Rails 8.1.4.1](https://rubyonrails.org/2026/11/4/Rails-8.0.5.2-and-8.1.4.1-have-been-released).
+After I reported this issue to the Rails project, they issued [a fix](https://github.com/rails/rails/security/advisories/GHSA-2gff-2mmg-m73p) where the spoofing check was expanded to cover all three headers (`Client-IP`, `X-Forwarded-For`, `Forwarded`). The fix was released in [Rails 8.1.4.1](https://rubyonrails.org/2026/11/4/Rails-8.0.5.2-and-8.1.4.1-have-been-released). The vulnerability was assigned [CVE-2026-126083](https://nvd.nist.gov/vuln/detail/cve-2026-126083).
 
 ### Jetty
 Jetty has supported RFC 7239 `Forwarded` for a long time, at least [since 2016](https://github.com/jetty/jetty.project/commit/b45af1a3c99fea756539f81f085a33667e7f64c1). `Forwarded` support has always been enabled by default, along with `X-F`, and the priority order between them got formalised [in 2020](https://github.com/jetty/jetty.project/issues/5247). `Forwarded` is explicitly prioritised over `X-F` when both are present in an incoming request. This means that if proxy servers don't drop incoming `Forwarded` headers, the request IP address, host name and scheme **can be spoofed**.
@@ -229,3 +231,9 @@ I really don't know how widespread the issue is. Odds are that many servers are 
 Furthermore, it can be very difficult to even know if an app is vulnerable or not. For instance, spoofing the client IP address may work, but it could only be visible if the app has some kind of functionality that relies on the IP address. If there are no such features, the spoofing may still be visible in server access logs, for example, but an outside bug hunter has no visibility into that.
 
 In my opinion, web frameworks and libraries should never enable support for many different proxy headers by default. Developers or admins should be forced to make the decision based on the actual proxy setup in front of the app. Many servers already require configuring the "trusted proxies" manually, so why not include the list of trusted headers in the configuration, too?
+
+---
+
+Updates:
+
+* 2026-11-11: Added references to CVE-2026-126083 in the opening and the Rails sections. Reordered the opening sections for more clarity.
