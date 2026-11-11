@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+
+    <style>
+      :root {
+        --accent-color: #1683ac;
+        --accent-color-light: #6c8f9d;
+        --accent-color-highlight: #146887;
+        --accent-overlay-color: #fff;
+        --body-bg: #f7fbff;
+        --body-color: #000;
+        --heading-color: #000;
+        --table-bg-even: #f3f3f3;
+        --table-border-bottom: #dddddd;
+        --code-block-border-color: var(--accent-color-light);
+        
+        --code-block-scrollbar-thumb: #565869;
+        --code-block-scrollbar-bg:#FAFBFC;
+      }
+      
+        @media (prefers-color-scheme: dark) {
+          :root {
+            --accent-color: #52b3d8;
+            --accent-color-highlight: #66c4e8;
+            --accent-overlay-color: #dee2e6;
+            --body-bg: #212529;
+            --body-color: #abb2bf;
+            --heading-color: #dee2e6;
+            --table-bg-even: #2d3237;
+            --table-border-bottom: #697077;
+            --code-block-border-color: #00000000;
+            
+            --code-block-scrollbar-thumb: #BFBDB6;
+            --code-block-scrollbar-bg:#0D1017;
+          }
+        }
+      
+    </style>
+
+    <meta name="theme-color" content="#1683ac" />
+
+
+    
+
+    
+      <meta property="og:type" content="website">
+    
+
+    
+      <link rel="canonical" href="https://www.lkoskela.fi/tags/forwarded/">
+      <meta property="og:url" content="https://www.lkoskela.fi/tags/forwarded/">
+    
+    <meta property="og:site_name" content="Lauri Koskela">
+
+    
+
+    <meta name="twitter:card" content="summary">
+
+    
+
+    
+
+    
+      
+        <meta name="description" content="" />
+        <meta property="og:description" content="">
+        <meta name="twitter:description" content="">
+      
+    
+
+    
+      <meta property="og:title" content="Lauri Koskela">
+      <meta name="twitter:title" content="Lauri Koskela">
+    
+
+    
+      <link rel="prerender" href="/about/" />
+    
+
+    
+    
+    <title>
+      
+        
+          Lauri Koskela
+        
+      
+    </title>
+
+    
+    
+      <link rel="stylesheet" href="https://www.lkoskela.fi/main.css">
+    
+     
+  
+    <link rel="prerender" href="https://www.lkoskela.fi/blog/2026-11-05-forwarded-without-question/" />
+  
+
+  </head>
+  <body>
+    
+      <header>
+        <a class="site-name" href="/">
+          Lauri Koskela
+        </a>
+        <nav>
+          <a class="nav-icon" href="https://www.lkoskela.fi/atom.xml">
+            <i class="ri-rss-fill"></i>
+          </a>
+          <a class="nav-icon" href="https://github.com/luryus">
+            <i class="ri-github-fill"></i>
+          </a>
+          
+            <a href="/about/">About</a>
+          
+        </nav>
+      </header>
+    
+    <main>
+    
+  <h1>1 pages tagged with "forwarded"</h1>
+  <div class="taxonomy-container">
+    
+      
+  <div class="post-preview">
+    <h3 class="post-title"><a href="https://www.lkoskela.fi/blog/2026-11-05-forwarded-without-question/">Forwarded Without Question: How Web Frameworks Overtrust the Forwarded Header</a></h3>
+    <small>
+      November 05, 2026 - 5024 words - 22 mins
+    </small>
+    <div class="summary">
+      <p>Some web frameworks and servers, including Rails, Spring and Jetty, read values from the <code>Forwarded</code> request header in their default configuration. Most reverse proxies, CDNs and middleware servers do not touch the <code>Forwarded</code> header in requests. As a result, <code>Forwarded</code> headers set in untrusted requests will get passed on through proxies to the web applications, which may then consider the header trusted and use the values. This means that applications are often vulnerable to client IP and request host name spoofing via the <code>Forwarded</code> header.</p>
+<p>My reports led to a Rails security fix (<a rel="external" href="https://github.com/rails/rails/security/advisories/GHSA-2gff-2mmg-m73p">CVE-2026-126083</a>) and changes to forwarded header handling in Spring and Reactor Netty.</p>
+<p>To remove the spoofing vector, developers and administrators should make sure their proxies and applications agree on the headers that are trusted, and configure proxies to drop any untrusted proxy headers in requests.</p>
+      
+      <a href="https://www.lkoskela.fi/blog/2026-11-05-forwarded-without-question/">read more</a>
+    </div>
+  </div>
+
+    
+  </div>
+
+    </main>
+    <footer class="footer-page">
+    
+      
+    
+    </footer>
+  </body>
+</html>
